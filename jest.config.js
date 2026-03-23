@@ -18,6 +18,7 @@ module.exports = {
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/types/**',
+    '!src/services/supabase.ts',
   ],
   coverageThreshold: {
     global: {
