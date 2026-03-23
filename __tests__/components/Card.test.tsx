@@ -5,8 +5,8 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { Text } from 'react-native';
-import { Card } from '../../src/components/common/Card';
-import { Colors } from '../../src/constants/theme';
+import { Card } from '@/components/common/Card';
+import { Colors } from '@/constants/theme';
 
 describe('Card', () => {
   it('renders children correctly', () => {

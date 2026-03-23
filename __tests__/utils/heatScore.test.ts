@@ -9,8 +9,8 @@ import {
   calculateHeatScore,
   getHydrationInterval,
   calculateWaterTarget,
-} from '../../src/utils/heatScore';
-import type { WeatherData } from '../../src/types';
+} from '@/utils/heatScore';
+import type { WeatherData } from '@/types';
 
 // Helper to create weather data with sensible defaults
 function makeWeather(overrides: Partial<WeatherData> = {}): WeatherData {

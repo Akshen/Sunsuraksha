@@ -7,7 +7,7 @@
 
 import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Typography } from '../../src/constants/theme';
+import { Colors, Typography } from '@/constants/theme';
 
 type TabIconProps = {
   label: string;
