@@ -12,8 +12,8 @@
  *   - Time-of-day penalty:    10%
  */
 
-import { getHeatColor, getHeatBgColor, getHeatLabel } from '../constants/theme';
-import type { WeatherData, HeatScore } from '../types';
+import { getHeatColor, getHeatBgColor, getHeatLabel } from '@/constants/theme';
+import type { WeatherData, HeatScore } from '@/types';
 
 /**
  * Compute the heat danger score (0-100)

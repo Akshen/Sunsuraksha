@@ -7,7 +7,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Config } from '../constants/config';
+import { Config } from '@/constants/config';
 
 export const supabase = createClient(
   Config.SUPABASE_URL,

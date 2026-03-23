@@ -5,7 +5,7 @@
  */
 
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Colors, Typography, Spacing } from '../../constants/theme';
+import { Colors, Typography, Spacing } from '@/constants/theme';
 
 interface ScreenHeaderProps {
   title: string;

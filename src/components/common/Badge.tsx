@@ -5,7 +5,7 @@
  */
 
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { Colors, BorderRadius, Spacing, Typography } from '../../constants/theme';
+import { Colors, BorderRadius, Spacing, Typography } from '@/constants/theme';
 
 type BadgeVariant = 'safe' | 'moderate' | 'danger' | 'extreme' | 'info' | 'neutral';
 
