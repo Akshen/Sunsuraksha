@@ -1,0 +1,1395 @@
+{
+  "version": "2.0.0",
+  "last_updated": "2026-03-23",
+  "metadata": {
+    "description": "TapChill — Complete food and drink database for Indian summer heat survival",
+    "primary_nutrition_source": "Indian Food Composition Tables (IFCT) 2017 — National Institute of Nutrition, ICMR, Hyderabad",
+    "secondary_nutrition_source": "USDA FoodData Central (fdc.nal.usda.gov)",
+    "ayurvedic_references": "Charaka Samhita; Ashtanga Hridayam; Bhavaprakasha Nighantu",
+    "medical_references": "NDMA Heatwave Guidelines 2024; WHO Heat-Health Action Plans; Indian Journal of Public Health (heat illness studies)",
+    "image_license_note": "All image_url fields use Unsplash Source API (free, attribution not required). Replace with your own CDN-hosted images before production.",
+    "notes": "Nutrition values are per 100g of edible portion unless stated otherwise. Electrolyte values from IFCT 2017 where available, USDA otherwise.",
+    "temperature_thresholds": {
+      "moderate": { "min": 30, "max": 37, "label": "Warm", "color": "#639922" },
+      "hot": { "min": 37, "max": 42, "label": "Hot", "color": "#EF9F27" },
+      "extreme": { "min": 42, "max": 50, "label": "Extreme heat", "color": "#E24B4A" }
+    }
+  },
+
+  "foods": [
+    {
+      "id": "food_001",
+      "name": "Watermelon",
+      "name_hi": "तरबूज",
+      "scientific_name": "Citrullus lanatus",
+      "image_url": "https://images.unsplash.com/photo-1589984662646-e7b2e4962f18?w=600",
+      "image_alt": "Sliced red watermelon on a plate",
+      "category": "fruit",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [30, 50],
+      "best_time_of_day": ["morning", "afternoon", "evening"],
+      "availability_months": [3, 4, 5, 6, 7, 8],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["hydrating", "quick-snack", "no-cook"],
+
+      "nutrition_per_100g": {
+        "source": "IFCT 2017 (E074) / USDA FDC #167765",
+        "water_g": 91.45,
+        "energy_kcal": 30,
+        "protein_g": 0.6,
+        "fat_g": 0.2,
+        "carbohydrate_g": 7.6,
+        "fiber_g": 0.4,
+        "sugar_g": 6.2,
+        "vitamin_c_mg": 8.1,
+        "vitamin_a_mcg": 28,
+        "potassium_mg": 112,
+        "magnesium_mg": 10,
+        "sodium_mg": 1,
+        "calcium_mg": 7,
+        "iron_mg": 0.24,
+        "zinc_mg": 0.1,
+        "lycopene_mcg": 4532
+      },
+
+      "why_recommended_in_summer": "Watermelon is 91–92% water, making it one of nature's most effective hydrators. The high lycopene content (more than tomatoes) provides powerful antioxidant protection against UV-induced skin damage. Its natural sugars provide quick energy without the metabolic heat burden of complex carbohydrates. In Ayurveda, it is classified as 'sheeta virya' (cooling potency) and is recommended to pacify Pitta dosha during summer. The potassium and magnesium content helps replenish electrolytes lost through sweating. NDMA heatwave guidelines specifically list watermelon among recommended foods during heat emergencies.",
+
+      "properties": {
+        "glycemic_index": 72,
+        "glycemic_load": 5,
+        "water_content_pct": 91.5,
+        "cooling_score": 9,
+        "hydration_index": 9.5,
+        "digestibility": "very easy",
+        "ayurvedic_rasa": "Madhura (sweet)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)"
+      },
+
+      "preparation": {
+        "method": "no-cook",
+        "prep_time_min": 5,
+        "steps": [
+          "Wash the outer rind thoroughly with clean water.",
+          "Cut into thick slices or cubes.",
+          "Optionally sprinkle with black salt (kala namak) and a squeeze of lemon for enhanced electrolyte benefit.",
+          "Serve chilled. For juice: blend cubes without added water, strain if desired, add mint leaves."
+        ],
+        "storage_tip": "Cut watermelon spoils fast in heat. Refrigerate immediately and consume within 4-6 hours. Never leave cut watermelon at room temperature in summer.",
+        "serving_suggestion": "250g serving (about 2 large slices) provides ~230ml water equivalent"
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry E074, Watermelon (Citrullus lanatus)" },
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 167765" },
+        { "type": "health_claim", "name": "NDMA Heat Wave Guidelines", "reference": "National Disaster Management Authority, Govt of India, 2024 edition" },
+        { "type": "ayurvedic", "name": "Bhavaprakasha Nighantu", "reference": "Amradiphala Varga — classification of cooling fruits" }
+      ]
+    },
+    {
+      "id": "food_002",
+      "name": "Cucumber",
+      "name_hi": "खीरा",
+      "scientific_name": "Cucumis sativus",
+      "image_url": "https://images.unsplash.com/photo-1449300079323-02e209d9d3a6?w=600",
+      "image_alt": "Fresh green cucumbers sliced",
+      "category": "vegetable",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [30, 50],
+      "best_time_of_day": ["morning", "afternoon", "evening"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["hydrating", "quick-snack", "no-cook", "everyday"],
+
+      "nutrition_per_100g": {
+        "source": "IFCT 2017 (D044) / USDA FDC #168409",
+        "water_g": 95.23,
+        "energy_kcal": 15,
+        "protein_g": 0.7,
+        "fat_g": 0.1,
+        "carbohydrate_g": 3.6,
+        "fiber_g": 0.5,
+        "sugar_g": 1.7,
+        "vitamin_c_mg": 2.8,
+        "vitamin_a_mcg": 5,
+        "potassium_mg": 147,
+        "magnesium_mg": 13,
+        "sodium_mg": 2,
+        "calcium_mg": 16,
+        "iron_mg": 0.28,
+        "zinc_mg": 0.2,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Cucumber has the highest water content (95–96%) among commonly eaten vegetables, making it the single most hydrating solid food available. In Ayurveda, cucumber is called 'Susheetala' (naturally cool) and is prescribed for excessive thirst, urinary troubles, and heat-related skin irritation. The silica content supports skin health against sun damage. Cucumbers contain fisetin, a flavonoid shown in studies to reduce inflammatory response — important when the body is under heat stress. The extremely low calorie count (15 kcal/100g) means it hydrates without adding metabolic heat load.",
+
+      "properties": {
+        "glycemic_index": 15,
+        "glycemic_load": 1,
+        "water_content_pct": 95.2,
+        "cooling_score": 10,
+        "hydration_index": 10,
+        "digestibility": "very easy",
+        "ayurvedic_rasa": "Madhura (sweet), Kashaya (astringent)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)"
+      },
+
+      "preparation": {
+        "method": "no-cook",
+        "prep_time_min": 3,
+        "steps": [
+          "Wash thoroughly. Peel if preferred (skin is edible and nutritious).",
+          "Slice into rounds or sticks.",
+          "Sprinkle with black salt, roasted cumin powder, and lemon juice.",
+          "For raita: grate cucumber, mix with whisked curd, add roasted cumin and mint."
+        ],
+        "storage_tip": "Store whole cucumbers in the refrigerator. Once cut, wrap in cloth and consume within 2-3 hours in summer.",
+        "serving_suggestion": "150g (about 1 medium cucumber) provides ~143ml water equivalent"
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry D044, Cucumber green short (Cucumis sativus)" },
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 168409" },
+        { "type": "ayurvedic", "name": "Charaka Samhita", "reference": "Sutra Sthana, Chapter 27 — Annapanavidhi Adhyaya" },
+        { "type": "research", "name": "Journal of Agricultural and Food Chemistry", "reference": "Fisetin in cucumbers: anti-inflammatory properties (2012)" }
+      ]
+    },
+    {
+      "id": "food_003",
+      "name": "Muskmelon (Kharbuja)",
+      "name_hi": "खरबूजा",
+      "scientific_name": "Cucumis melo",
+      "image_url": "https://images.unsplash.com/photo-1571575173700-afb9492e6a50?w=600",
+      "image_alt": "Ripe muskmelon cut in half showing orange flesh",
+      "category": "fruit",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [32, 50],
+      "best_time_of_day": ["morning", "afternoon"],
+      "availability_months": [3, 4, 5, 6, 7],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["hydrating", "quick-snack", "no-cook", "seasonal"],
+
+      "nutrition_per_100g": {
+        "source": "IFCT 2017 (E044) / USDA FDC #169092",
+        "water_g": 89.82,
+        "energy_kcal": 34,
+        "protein_g": 0.8,
+        "fat_g": 0.2,
+        "carbohydrate_g": 8.2,
+        "fiber_g": 0.9,
+        "sugar_g": 7.9,
+        "vitamin_c_mg": 36.7,
+        "vitamin_a_mcg": 169,
+        "potassium_mg": 267,
+        "magnesium_mg": 12,
+        "sodium_mg": 16,
+        "calcium_mg": 9,
+        "iron_mg": 0.21,
+        "zinc_mg": 0.18,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Muskmelon is 90% water and remarkably rich in potassium (267mg/100g) — one of the key electrolytes lost through heavy sweating. It contains nearly 37mg of Vitamin C per 100g, which supports immune function under heat stress. The high Vitamin A content (169 mcg RAE) protects skin from UV damage. In Ayurveda, kharbuja is considered a Pitta-pacifying fruit and is traditionally eaten during peak summer months. The natural sugars provide quick energy without the digestive burden of cooked food.",
+
+      "properties": {
+        "glycemic_index": 65,
+        "glycemic_load": 4,
+        "water_content_pct": 89.8,
+        "cooling_score": 8,
+        "hydration_index": 9,
+        "digestibility": "very easy",
+        "ayurvedic_rasa": "Madhura (sweet)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)"
+      },
+
+      "preparation": {
+        "method": "no-cook",
+        "prep_time_min": 5,
+        "steps": [
+          "Wash the outer rind well (bacteria can transfer when cutting).",
+          "Cut in half, scoop out seeds.",
+          "Slice into wedges or cube the flesh.",
+          "Serve chilled. Can be blended into smoothies or milkshakes."
+        ],
+        "storage_tip": "Whole melon lasts 3-4 days at room temperature. Once cut, refrigerate and consume within 4 hours in summer.",
+        "serving_suggestion": "200g serving provides ~180ml water equivalent plus 534mg potassium"
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry E044, Muskmelon (Cucumis melo)" },
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 169092" },
+        { "type": "ayurvedic", "name": "Bhavaprakasha Nighantu", "reference": "Amradiphala Varga" }
+      ]
+    },
+    {
+      "id": "food_004",
+      "name": "Curd / Yogurt (Dahi)",
+      "name_hi": "दही",
+      "scientific_name": "Fermented Bos taurus milk",
+      "image_url": "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600",
+      "image_alt": "Bowl of fresh white curd yogurt",
+      "category": "dairy",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [30, 50],
+      "best_time_of_day": ["morning", "afternoon"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": false,
+      "allergens": ["dairy"],
+      "tags": ["probiotic", "everyday", "versatile"],
+
+      "nutrition_per_100g": {
+        "source": "IFCT 2017 (L002) / USDA FDC #171284",
+        "water_g": 85.07,
+        "energy_kcal": 60,
+        "protein_g": 3.5,
+        "fat_g": 3.3,
+        "carbohydrate_g": 4.7,
+        "fiber_g": 0,
+        "sugar_g": 4.7,
+        "vitamin_c_mg": 0.5,
+        "vitamin_a_mcg": 27,
+        "potassium_mg": 155,
+        "magnesium_mg": 11,
+        "sodium_mg": 46,
+        "calcium_mg": 121,
+        "iron_mg": 0.05,
+        "zinc_mg": 0.52,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Curd is one of India's most powerful summer foods. The Lactobacillus and Bifidobacterium probiotics strengthen gut microbiome, which weakens in extreme heat. Curd has a natural cooling effect on the body — unlike milk, fermentation changes its thermal properties from neutral to cooling. The lactic acid aids digestion when appetite drops in heat. Calcium (121mg/100g) supports muscle function affected by dehydration. In Ayurveda, freshly set dahi (not sour/old) is classified as Pitta-pacifying and is the base for buttermilk (chaas), raita, and lassi — all cornerstone summer foods across India.",
+
+      "properties": {
+        "glycemic_index": 36,
+        "glycemic_load": 2,
+        "water_content_pct": 85.1,
+        "cooling_score": 8,
+        "hydration_index": 7,
+        "digestibility": "easy",
+        "ayurvedic_rasa": "Amla (sour), Madhura (sweet)",
+        "ayurvedic_virya": "Sheeta (cooling) when fresh",
+        "ayurvedic_vipaka": "Amla (sour post-digestive)"
+      },
+
+      "preparation": {
+        "method": "fermented (pre-prepared)",
+        "prep_time_min": 0,
+        "steps": [
+          "Best consumed fresh — set curd in the morning for evening use.",
+          "Eat plain with a pinch of sugar, or with rice as curd rice.",
+          "Add grated cucumber and mint for instant raita.",
+          "Whisk with water (1:2 ratio) for quick buttermilk.",
+          "Avoid curd at night in Ayurveda — consume before sunset."
+        ],
+        "storage_tip": "Curd sours rapidly in summer heat. Refrigerate immediately after setting. Consume within 24 hours. Never store in metal containers.",
+        "serving_suggestion": "150g serving with meals. Combine with cucumber for maximum cooling effect."
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry L002, Curd (cow milk)" },
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 171284, Yogurt plain whole milk" },
+        { "type": "research", "name": "Indian Journal of Medical Research", "reference": "Probiotic properties of Indian curd (dahi) and their role in gut health — ICMR review" },
+        { "type": "ayurvedic", "name": "Charaka Samhita", "reference": "Sutra Sthana 27 — Dadhi (curd) properties and seasonal guidance" }
+      ]
+    },
+    {
+      "id": "food_005",
+      "name": "Bottle Gourd (Lauki)",
+      "name_hi": "लौकी / घीया",
+      "scientific_name": "Lagenaria siceraria",
+      "image_url": "https://images.unsplash.com/photo-1563746098-29e39dbb7023?w=600",
+      "image_alt": "Fresh green bottle gourd on wooden surface",
+      "category": "vegetable",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [35, 50],
+      "best_time_of_day": ["afternoon", "evening"],
+      "availability_months": [3, 4, 5, 6, 7, 8, 9],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["light-meal", "easy-digest", "traditional"],
+
+      "nutrition_per_100g": {
+        "source": "IFCT 2017 (D009) / USDA FDC #169227",
+        "water_g": 92.02,
+        "energy_kcal": 15,
+        "protein_g": 0.6,
+        "fat_g": 0.1,
+        "carbohydrate_g": 3.4,
+        "fiber_g": 0.6,
+        "sugar_g": 2.0,
+        "vitamin_c_mg": 10.1,
+        "vitamin_a_mcg": 16,
+        "potassium_mg": 150,
+        "magnesium_mg": 11,
+        "sodium_mg": 2,
+        "calcium_mg": 26,
+        "iron_mg": 0.2,
+        "zinc_mg": 0.7,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Bottle gourd (lauki) is 92% water and one of the lightest vegetables to digest, making it ideal when the digestive system slows down in extreme heat. It is one of the most prescribed vegetables in Ayurveda for Pitta dosha imbalance during summer. The very low calorie content (15 kcal/100g) means minimal metabolic heat production during digestion (low thermic effect). Traditional Indian medicine has used lauki juice as a morning coolant for centuries. Combined with rice and buttermilk, it forms what many families across India consider the perfect heat-proof meal.",
+
+      "properties": {
+        "glycemic_index": 15,
+        "glycemic_load": 1,
+        "water_content_pct": 92.0,
+        "cooling_score": 9,
+        "hydration_index": 8,
+        "digestibility": "very easy",
+        "ayurvedic_rasa": "Madhura (sweet)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)"
+      },
+
+      "preparation": {
+        "method": "cooked",
+        "prep_time_min": 25,
+        "steps": [
+          "Peel and cut into small cubes.",
+          "IMPORTANT: Taste a tiny piece raw — if bitter, discard the entire gourd (bitter lauki contains toxic tetracyclic triterpenoids).",
+          "For sabzi: cook with minimal oil, cumin, turmeric, and salt. Add tomato if desired.",
+          "For juice: blend raw lauki with mint and a pinch of salt. Strain and drink fresh.",
+          "For dal combo: add lauki cubes while cooking moong dal — makes it lighter."
+        ],
+        "storage_tip": "Store whole in a cool place. Once cut, refrigerate and use within 24 hours. Cooked lauki spoils very fast — consume immediately.",
+        "serving_suggestion": "200g cooked serving with roti or rice. Best paired with buttermilk."
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry D009, Bottle gourd (Lagenaria siceraria)" },
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 169227" },
+        { "type": "ayurvedic", "name": "Ashtanga Hridayam", "reference": "Sutra Sthana — Alabu (bottle gourd) in summer regimen" },
+        { "type": "safety", "name": "Indian Journal of Gastroenterology", "reference": "Toxic bottle gourd juice: bitter taste indicates cucurbitacin toxicity (case reports)" }
+      ]
+    },
+    {
+      "id": "food_006",
+      "name": "Mint (Pudina)",
+      "name_hi": "पुदीना",
+      "scientific_name": "Mentha spicata / Mentha piperita",
+      "image_url": "https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?w=600",
+      "image_alt": "Fresh green mint leaves bunch",
+      "category": "herb",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [30, 50],
+      "best_time_of_day": ["morning", "afternoon", "evening"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["herb", "flavor-booster", "cooling-agent"],
+
+      "nutrition_per_100g": {
+        "source": "USDA FDC #173474",
+        "water_g": 85.55,
+        "energy_kcal": 44,
+        "protein_g": 3.3,
+        "fat_g": 0.7,
+        "carbohydrate_g": 8.4,
+        "fiber_g": 6.8,
+        "sugar_g": 0,
+        "vitamin_c_mg": 31.8,
+        "vitamin_a_mcg": 212,
+        "potassium_mg": 569,
+        "magnesium_mg": 80,
+        "sodium_mg": 31,
+        "calcium_mg": 243,
+        "iron_mg": 5.08,
+        "zinc_mg": 1.11,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Mint contains menthol, which activates TRPM8 cold-sensitive receptors in the mouth and skin, creating a genuine cooling sensation — not just a flavor but a physiological response. This makes mint one of the few foods that provides both perceived and actual cooling. Mint also relaxes smooth muscle in the digestive tract, easing the stomach cramps and nausea common during heat exposure. Its antimicrobial properties help prevent summer food-borne infections. In Ayurveda, pudina is a premier herb for pacifying aggravated Pitta and is added to virtually every summer drink across India.",
+
+      "properties": {
+        "glycemic_index": 0,
+        "glycemic_load": 0,
+        "water_content_pct": 85.6,
+        "cooling_score": 10,
+        "hydration_index": 5,
+        "digestibility": "easy",
+        "ayurvedic_rasa": "Tikta (bitter), Katu (pungent)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Katu (pungent post-digestive)",
+        "active_compound": "Menthol (activates cold receptors TRPM8)"
+      },
+
+      "preparation": {
+        "method": "no-cook (additive)",
+        "prep_time_min": 2,
+        "steps": [
+          "Wash leaves thoroughly in clean water.",
+          "For chutney: grind mint, coriander, green chilli, lemon juice, and salt.",
+          "For mint water: muddle 8-10 leaves in a glass, add cold water and lemon.",
+          "Add to buttermilk, raita, nimbu pani, jaljeera, or any summer drink.",
+          "For iced mint tea: steep leaves in hot water 5 min, cool, add lemon and honey."
+        ],
+        "storage_tip": "Wrap in damp paper towel and refrigerate. Lasts 4-5 days. Mint wilts fast in heat — never leave at room temperature.",
+        "serving_suggestion": "10-15 leaves per drink or dish. Use liberally — it's very low calorie."
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 173474, Spearmint fresh" },
+        { "type": "research", "name": "Molecular Pain Journal", "reference": "McKemy DD — TRPM8 cold receptor activation by menthol (2005)" },
+        { "type": "research", "name": "Phytotherapy Research", "reference": "Antimicrobial and digestive properties of Mentha spicata" },
+        { "type": "ayurvedic", "name": "Bhavaprakasha Nighantu", "reference": "Haritakyadi Varga — Pudina classification" }
+      ]
+    },
+    {
+      "id": "food_007",
+      "name": "Sabja Seeds (Basil Seeds)",
+      "name_hi": "सब्जा बीज / तुकमरिया",
+      "scientific_name": "Ocimum basilicum",
+      "image_url": "https://images.unsplash.com/photo-1622485831930-6961e4a5e722?w=600",
+      "image_alt": "Soaked sabja basil seeds in a glass of water showing gel coating",
+      "category": "seed",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [35, 50],
+      "best_time_of_day": ["morning", "afternoon", "evening"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["superfood", "traditional", "add-to-drinks"],
+
+      "nutrition_per_100g": {
+        "source": "USDA FDC #171921 / Published literature on Ocimum basilicum seeds",
+        "water_g": 6.0,
+        "energy_kcal": 19,
+        "protein_g": 2.0,
+        "fat_g": 0.6,
+        "carbohydrate_g": 2.3,
+        "fiber_g": 22.6,
+        "sugar_g": 0,
+        "vitamin_c_mg": 0,
+        "vitamin_a_mcg": 0,
+        "potassium_mg": 462,
+        "magnesium_mg": 31,
+        "sodium_mg": 20,
+        "calcium_mg": 258,
+        "iron_mg": 2.27,
+        "zinc_mg": 1.58,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Sabja seeds absorb 30x their weight in water when soaked, forming a gel coat that releases water slowly during digestion — providing sustained hydration unlike plain water which passes through quickly. This gel also creates a feeling of fullness, reducing overeating in summer. The seeds are rich in soluble fiber (22.6g/100g), which aids the sluggish summer digestion. Ayurveda classifies sabja as one of the most potent body coolants, traditionally added to sherbet, falooda, and lemon water across India. They also help control acidity — a common complaint during heatwaves. The iron and calcium content is surprisingly high for a seed consumed in small quantities.",
+
+      "properties": {
+        "glycemic_index": 0,
+        "glycemic_load": 0,
+        "water_content_pct": 6,
+        "water_absorption_ratio": "30:1",
+        "cooling_score": 9,
+        "hydration_index": 8,
+        "digestibility": "easy (when soaked)",
+        "ayurvedic_rasa": "Madhura (sweet)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)"
+      },
+
+      "preparation": {
+        "method": "soak",
+        "prep_time_min": 15,
+        "steps": [
+          "Add 1 teaspoon of sabja seeds to half a glass of water.",
+          "Wait 15 minutes until seeds swell and develop a translucent gel coating.",
+          "NEVER eat dry/unsoaked sabja seeds — they can swell in the throat and cause choking.",
+          "Add soaked seeds to nimbu pani, falooda, milkshakes, sherbet, or kulfi.",
+          "Can also be added to smoothie bowls and fruit salads."
+        ],
+        "storage_tip": "Store dry seeds in an airtight container in a cool, dark place. Once soaked, use within 2-3 hours — do not store soaked seeds.",
+        "serving_suggestion": "1-2 teaspoons per drink (about 5-10g dry). The gel provides the equivalent of an extra 150ml slow-release hydration."
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 171921, Basil seed" },
+        { "type": "research", "name": "International Journal of Food Sciences and Nutrition", "reference": "Physicochemical properties of Ocimum basilicum seed mucilage — water absorption and gel formation" },
+        { "type": "ayurvedic", "name": "Bhavaprakasha Nighantu", "reference": "Guduchyadi Varga — Tukmaria as sheeta virya" },
+        { "type": "safety", "name": "General food safety", "reference": "Dry seeds must always be soaked before consumption to prevent choking hazard" }
+      ]
+    },
+    {
+      "id": "food_008",
+      "name": "Fennel Seeds (Saunf)",
+      "name_hi": "सौंफ",
+      "scientific_name": "Foeniculum vulgare",
+      "image_url": "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600",
+      "image_alt": "Fennel seeds in a wooden bowl",
+      "category": "spice",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [30, 50],
+      "best_time_of_day": ["afternoon", "evening"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["after-meal", "digestive", "traditional"],
+
+      "nutrition_per_100g": {
+        "source": "IFCT 2017 (H013) / USDA FDC #171323",
+        "water_g": 8.81,
+        "energy_kcal": 345,
+        "protein_g": 15.8,
+        "fat_g": 14.9,
+        "carbohydrate_g": 52.3,
+        "fiber_g": 39.8,
+        "sugar_g": 0,
+        "vitamin_c_mg": 21,
+        "vitamin_a_mcg": 7,
+        "potassium_mg": 1694,
+        "magnesium_mg": 385,
+        "sodium_mg": 88,
+        "calcium_mg": 1196,
+        "iron_mg": 18.5,
+        "zinc_mg": 3.7,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Fennel is one of the rare spices classified as 'cooling' in Ayurveda (most spices are heating). It contains anethole, the compound responsible for its sweet aroma, which has documented anti-spasmodic effects on the digestive tract. This makes saunf the go-to after-meal digestive in Indian summer — it settles the stomach without adding heat. The extraordinarily high potassium (1694mg/100g) and calcium (1196mg/100g) values make even a small 5g portion meaningful for electrolyte replenishment. Saunf water (soaked overnight) is a traditional remedy for body heat and acidity across North and West India.",
+
+      "properties": {
+        "glycemic_index": 0,
+        "glycemic_load": 0,
+        "water_content_pct": 8.8,
+        "cooling_score": 7,
+        "hydration_index": 3,
+        "digestibility": "easy",
+        "ayurvedic_rasa": "Madhura (sweet), Katu (pungent)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)",
+        "active_compound": "Anethole (anti-spasmodic, carminative)"
+      },
+
+      "preparation": {
+        "method": "raw / soaked",
+        "prep_time_min": 1,
+        "steps": [
+          "After meals: chew 1/2 teaspoon of saunf directly — the simplest approach.",
+          "For saunf water: soak 2 tsp in a glass of water overnight. Strain and drink in the morning.",
+          "For fennel tea: steep 1 tsp crushed fennel in hot water 5 min. Cool and drink.",
+          "Add to buttermilk, raita, or mint chutney for subtle sweetness.",
+          "Popular in paan (betel leaf) — also a cooling after-meal tradition."
+        ],
+        "storage_tip": "Store in airtight container away from moisture. Lasts 6+ months.",
+        "serving_suggestion": "5g (1 teaspoon) after meals. For saunf water, drink 250ml in the morning."
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry H013, Fennel seed (Foeniculum vulgare)" },
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 171323" },
+        { "type": "research", "name": "BioMed Research International", "reference": "Pharmacological properties of Foeniculum vulgare — anethole as anti-spasmodic agent" },
+        { "type": "ayurvedic", "name": "Charaka Samhita", "reference": "Shatapushpa (fennel) — one of few cooling spices listed in Dravyaguna" }
+      ]
+    },
+    {
+      "id": "food_009",
+      "name": "Rice with Curd (Dahi Chawal)",
+      "name_hi": "दही चावल",
+      "scientific_name": "Oryza sativa + fermented milk",
+      "image_url": "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600",
+      "image_alt": "Bowl of curd rice garnished with curry leaves and mustard seeds",
+      "category": "meal",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [35, 50],
+      "best_time_of_day": ["afternoon"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regions": ["south", "all"],
+      "is_vegetarian": true,
+      "is_vegan": false,
+      "allergens": ["dairy"],
+      "tags": ["light-meal", "lunch", "traditional", "comfort-food"],
+
+      "nutrition_per_100g": {
+        "source": "Calculated from IFCT 2017 entries: cooked rice (A004) + curd (L002), estimated 60:40 ratio",
+        "water_g": 72,
+        "energy_kcal": 130,
+        "protein_g": 2.8,
+        "fat_g": 1.5,
+        "carbohydrate_g": 25,
+        "fiber_g": 0.3,
+        "sugar_g": 2.0,
+        "vitamin_c_mg": 0.3,
+        "vitamin_a_mcg": 11,
+        "potassium_mg": 80,
+        "magnesium_mg": 15,
+        "sodium_mg": 150,
+        "calcium_mg": 52,
+        "iron_mg": 0.4,
+        "zinc_mg": 0.3,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Dahi chawal is possibly the most universal Indian summer lunch. Rice is one of the fastest-digesting grains, producing minimal metabolic heat. Combined with cold curd, it creates a probiotic, cooling, easy-to-digest meal that doesn't burden the already-stressed digestive system during heat. The fermentation in curd produces B-vitamins that support energy metabolism. Across South India (thayir sadam), North India (dahi bhat), and Gujarat, curd rice is the default when temperatures cross 40°C. It's also one of the most affordable complete meals — crucial for heat-vulnerable low-income populations.",
+
+      "properties": {
+        "glycemic_index": 52,
+        "glycemic_load": 13,
+        "water_content_pct": 72,
+        "cooling_score": 8,
+        "hydration_index": 6,
+        "digestibility": "very easy",
+        "ayurvedic_rasa": "Madhura (sweet), Amla (sour)",
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)"
+      },
+
+      "preparation": {
+        "method": "cooked + mixed",
+        "prep_time_min": 20,
+        "steps": [
+          "Cook rice slightly soft (extra water). Cool to room temperature.",
+          "Mix with cold fresh curd (not sour) in 1:1 ratio. Add splash of milk if too thick.",
+          "Season with salt. Add tempering of mustard seeds, curry leaves, and green chilli in minimal oil.",
+          "South Indian style: add grated ginger, chopped coriander, and pomegranate seeds.",
+          "North Indian style: mix with sugar instead of salt for sweet version.",
+          "Serve at room temperature or slightly cool — do not serve hot."
+        ],
+        "storage_tip": "Prepare fresh each day. Leftover curd rice ferments further and can cause stomach upset. Never store for more than 3 hours in summer.",
+        "serving_suggestion": "300g serving (1 large bowl) for lunch. Best accompanied by pickle, papad, and buttermilk."
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Calculated from A004 (cooked rice) + L002 (curd)" },
+        { "type": "cultural", "name": "Traditional knowledge", "reference": "Pan-Indian summer dietary practice documented across regional cuisines" },
+        { "type": "research", "name": "Journal of Food Science and Technology", "reference": "Glycemic response of curd rice vs plain rice — lower GI when combined with curd" }
+      ]
+    },
+    {
+      "id": "food_010",
+      "name": "Raw Onion",
+      "name_hi": "कच्चा प्याज",
+      "scientific_name": "Allium cepa",
+      "image_url": "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?w=600",
+      "image_alt": "Raw red and white onions sliced",
+      "category": "vegetable",
+      "thermal_effect": "cooling",
+      "best_for_temp_range": [40, 50],
+      "best_time_of_day": ["afternoon"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["traditional-remedy", "outdoor-workers", "heatstroke-prevention"],
+
+      "nutrition_per_100g": {
+        "source": "IFCT 2017 (D058) / USDA FDC #170000",
+        "water_g": 89.11,
+        "energy_kcal": 40,
+        "protein_g": 1.1,
+        "fat_g": 0.1,
+        "carbohydrate_g": 9.3,
+        "fiber_g": 1.7,
+        "sugar_g": 4.2,
+        "vitamin_c_mg": 7.4,
+        "vitamin_a_mcg": 0,
+        "potassium_mg": 146,
+        "magnesium_mg": 10,
+        "sodium_mg": 4,
+        "calcium_mg": 23,
+        "iron_mg": 0.21,
+        "zinc_mg": 0.17,
+        "lycopene_mcg": 0
+      },
+
+      "why_recommended_in_summer": "Raw onion is India's most widespread folk remedy against heatstroke. Outdoor workers, farmers, and construction laborers across India eat raw onion with meals and often carry one in their pocket during peak summer — a practice documented in multiple ethnobotanical studies. Onion contains quercetin, a flavonoid with anti-inflammatory properties that may help the body's heat stress response. The high water content (89%) and natural sulfur compounds are believed to help the body regulate temperature. Note: raw onion is cooling, but cooked onion loses this property. The Indian government's NDMA heatwave advisory mentions consuming raw onion as a traditional preventive measure.",
+
+      "properties": {
+        "glycemic_index": 10,
+        "glycemic_load": 1,
+        "water_content_pct": 89.1,
+        "cooling_score": 7,
+        "hydration_index": 6,
+        "digestibility": "moderate",
+        "ayurvedic_rasa": "Madhura (sweet), Katu (pungent)",
+        "ayurvedic_virya": "Sheeta (cooling) when raw",
+        "ayurvedic_vipaka": "Madhura (sweet post-digestive)",
+        "active_compound": "Quercetin (anti-inflammatory flavonoid)"
+      },
+
+      "preparation": {
+        "method": "no-cook (raw only)",
+        "prep_time_min": 2,
+        "steps": [
+          "Slice raw onion into rings or thin half-moons.",
+          "Serve as side dish with lunch and dinner during peak summer.",
+          "Sprinkle with lemon juice and salt — aids absorption.",
+          "For onion-mint chutney: grind raw onion with mint, green chilli, and lemon.",
+          "IMPORTANT: Must be eaten raw to retain cooling properties. Cooking changes thermal nature."
+        ],
+        "storage_tip": "Whole onions last weeks in a cool, dry place. Once cut, use within 4-6 hours in summer. Cut onion exposed to heat breeds bacteria rapidly.",
+        "serving_suggestion": "50g (about 3-4 slices) with meals. More if working outdoors."
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry D058, Onion big (Allium cepa)" },
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 170000" },
+        { "type": "health_claim", "name": "NDMA Heat Wave Guidelines 2024", "reference": "Mentioned under traditional heat prevention measures" },
+        { "type": "research", "name": "Journal of Ethnopharmacology", "reference": "Quercetin content in Allium cepa and anti-inflammatory effects relevant to heat stress" },
+        { "type": "cultural", "name": "Ethnobotanical survey", "reference": "Documented practice among Indian outdoor workers — carrying raw onion during summer" }
+      ]
+    }
+  ],
+
+  "drinks": [
+    {
+      "id": "drink_001",
+      "name": "Nimbu Pani (Indian Lemonade)",
+      "name_hi": "नींबू पानी / शिकंजी",
+      "scientific_name": "Citrus limon + water",
+      "image_url": "https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=600",
+      "image_alt": "Glass of fresh nimbu pani with lemon slices and mint",
+      "category": "traditional_cooler",
+      "thermal_effect": "cooling",
+      "calories_per_serving": 40,
+      "serving_size_ml": 250,
+      "hydration_score": 95,
+      "electrolyte_restoration": "high",
+      "best_for_temp_range": [30, 50],
+      "best_time_of_day": ["morning", "afternoon", "evening"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regional_origin": "Pan-India",
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["instant", "electrolyte", "everyday", "cheapest"],
+
+      "nutrition_per_serving_250ml": {
+        "source": "Calculated from IFCT 2017 (E037 lemon) + standard recipe proportions",
+        "energy_kcal": 40,
+        "protein_g": 0.2,
+        "fat_g": 0,
+        "carbohydrate_g": 10,
+        "fiber_g": 0,
+        "vitamin_c_mg": 18,
+        "potassium_mg": 50,
+        "magnesium_mg": 4,
+        "sodium_mg": 200,
+        "calcium_mg": 8
+      },
+
+      "why_recommended_in_summer": "Nimbu pani is India's most accessible and cost-effective rehydration drink. Lemon juice provides citric acid, which enhances the absorption of electrolytes (sodium, potassium) in the gut — this is the same principle behind ORS. The Vitamin C content (18mg per glass) supports immune function weakened by heat stress. Black salt (kala namak) adds trace minerals and the sulfurous compounds aid digestion. The addition of roasted cumin adds carminative properties that settle the stomach. The WHO recognizes homemade sugar-salt solutions (which nimbu pani essentially is) as effective for mild dehydration. At roughly ₹2-3 per glass, it's the most democratic health intervention against heatwaves.",
+
+      "properties": {
+        "cooling_score": 9,
+        "hydration_index": 9.5,
+        "cost_per_serving_inr": 3,
+        "shelf_stable": false,
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "active_compounds": "Citric acid (electrolyte absorption), Ascorbic acid (Vitamin C)"
+      },
+
+      "preparation": {
+        "method": "mixed (no cook)",
+        "prep_time_min": 2,
+        "ingredients": [
+          { "item": "Lemon juice", "quantity": "1 lemon (30ml)", "notes": "Fresh only — bottled loses Vitamin C" },
+          { "item": "Water", "quantity": "250ml", "notes": "Cold but not ice-cold (Ayurveda advises against ice)" },
+          { "item": "Sugar or jaggery", "quantity": "1-2 tsp", "notes": "Jaggery adds iron; sugar dissolves faster" },
+          { "item": "Black salt (kala namak)", "quantity": "1/4 tsp", "notes": "Contains trace minerals absent in table salt" },
+          { "item": "Roasted cumin powder", "quantity": "1/4 tsp", "notes": "Digestive; optional but traditional" },
+          { "item": "Mint leaves", "quantity": "4-5 leaves", "notes": "Optional garnish; adds menthol cooling" }
+        ],
+        "steps": [
+          "Squeeze the lemon into a glass of cold water.",
+          "Add sugar or jaggery and stir until dissolved.",
+          "Add black salt and roasted cumin powder.",
+          "Crush mint leaves slightly and add to the glass.",
+          "Stir well and serve immediately."
+        ],
+        "storage_tip": "Make fresh each time — do not store. Vitamin C degrades rapidly once lemon is squeezed. Pre-mixing with sugar causes fermentation in heat.",
+        "variations": {
+          "Shikanji (North India)": "Add a pinch of chaat masala and ginger juice",
+          "Ginger lime water (South India)": "Add crushed fresh ginger",
+          "Jaljeera style": "Replace sugar with tamarind paste, add more cumin"
+        }
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry E037, Lemon (Citrus limon)" },
+        { "type": "health_claim", "name": "WHO/UNICEF ORS Guidelines", "reference": "Sugar-salt solution for oral rehydration — same principle as nimbu pani" },
+        { "type": "health_claim", "name": "NDMA Heatwave Guidelines 2024", "reference": "Listed as recommended drink during heatwave" },
+        { "type": "ayurvedic", "name": "Charaka Samhita", "reference": "Nimbuka (lemon) in summer regimen — Ritucharya Adhyaya" }
+      ]
+    },
+    {
+      "id": "drink_002",
+      "name": "Buttermilk (Chaas / Mattha)",
+      "name_hi": "छाछ / मठ्ठा",
+      "scientific_name": "Diluted fermented Bos taurus milk",
+      "image_url": "https://images.unsplash.com/photo-1559735037-a7137abcb5a2?w=600",
+      "image_alt": "Glass of white buttermilk garnished with mint and cumin",
+      "category": "traditional_cooler",
+      "thermal_effect": "cooling",
+      "calories_per_serving": 40,
+      "serving_size_ml": 250,
+      "hydration_score": 90,
+      "electrolyte_restoration": "high",
+      "best_for_temp_range": [32, 50],
+      "best_time_of_day": ["afternoon"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regional_origin": "Pan-India",
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": false,
+      "allergens": ["dairy"],
+      "tags": ["probiotic", "lunch-companion", "traditional", "everyday"],
+
+      "nutrition_per_serving_250ml": {
+        "source": "Calculated from IFCT 2017 (L002 curd) diluted 1:2 with water + spices",
+        "energy_kcal": 40,
+        "protein_g": 1.8,
+        "fat_g": 1.1,
+        "carbohydrate_g": 3.2,
+        "fiber_g": 0,
+        "vitamin_c_mg": 0.3,
+        "potassium_mg": 105,
+        "magnesium_mg": 8,
+        "sodium_mg": 180,
+        "calcium_mg": 65
+      },
+
+      "why_recommended_in_summer": "Chaas is arguably India's most scientifically sound traditional summer drink. The Lactobacillus strains in fermented curd produce lactic acid, which creates an acidic environment that inhibits pathogenic bacteria — critical when foodborne illnesses spike in summer. Buttermilk has a lower caloric density than milk, making it lighter to digest. The added cumin (jeera) is a carminative that prevents the gas and bloating common in heat. Salt replenishes sodium lost through sweat. The calcium (65mg per glass) supports muscle contractions, preventing the cramps that occur during dehydration. In Ayurveda, takra (buttermilk) is called 'amritam' (nectar) and Charaka states that it is the best drink in Grishma Ritu (summer season).",
+
+      "properties": {
+        "cooling_score": 9,
+        "hydration_index": 9,
+        "cost_per_serving_inr": 5,
+        "shelf_stable": false,
+        "probiotic_cultures": ["Lactobacillus acidophilus", "Lactobacillus bulgaricus", "Streptococcus thermophilus"],
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "active_compounds": "Lactic acid (probiotic), Calcium, B-vitamins from fermentation"
+      },
+
+      "preparation": {
+        "method": "mixed (no cook)",
+        "prep_time_min": 5,
+        "ingredients": [
+          { "item": "Fresh curd (dahi)", "quantity": "100g (1/2 cup)", "notes": "Use fresh, not sour curd" },
+          { "item": "Cold water", "quantity": "200ml", "notes": "Chilled but not ice-cold" },
+          { "item": "Roasted cumin powder", "quantity": "1/2 tsp", "notes": "Key flavor and digestive component" },
+          { "item": "Black salt", "quantity": "1/4 tsp", "notes": "Or regular salt to taste" },
+          { "item": "Mint leaves", "quantity": "5-6 leaves", "notes": "Chopped, adds cooling menthol" },
+          { "item": "Coriander leaves", "quantity": "1 tbsp chopped", "notes": "Traditional garnish" },
+          { "item": "Green chilli", "quantity": "1 small, optional", "notes": "Finely chopped; skip in extreme heat" }
+        ],
+        "steps": [
+          "Whisk curd until completely smooth with no lumps.",
+          "Add cold water gradually while whisking.",
+          "Add roasted cumin powder, black salt, and mix well.",
+          "Crush mint leaves slightly and add along with chopped coriander.",
+          "Stir and serve immediately. Can add 2-3 ice cubes if desired."
+        ],
+        "storage_tip": "Best consumed fresh. If made in bulk, refrigerate and consume within 4-6 hours. Chaas ferments rapidly in summer heat and can turn sour.",
+        "variations": {
+          "Masala Chaas (Gujarat)": "Add hing (asafoetida), curry leaves tempering, and extra ginger",
+          "Neer Mor (Tamil Nadu)": "Add ginger, green chilli, curry leaves, asafoetida, and mustard seeds tempering",
+          "Majjiga (Andhra Pradesh)": "Temper with mustard seeds, dried red chilli, and curry leaves in oil",
+          "Neer Majige (Karnataka)": "Simple — curd, water, salt, and a touch of coconut",
+          "Rajasthani Chaas": "Heavy on cumin and coriander, with hing and mint"
+        }
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Derived from Entry L002 (Curd, cow milk) with dilution factor" },
+        { "type": "research", "name": "Indian Journal of Traditional Knowledge", "reference": "Takra (buttermilk) in Ayurvedic literature — therapeutic properties and seasonal use" },
+        { "type": "research", "name": "Journal of Food Science and Technology", "reference": "Probiotic viability in Indian fermented dairy products" },
+        { "type": "ayurvedic", "name": "Charaka Samhita", "reference": "Sutra Sthana 27.229-230 — Takra as 'amritam' (nectar), best for summer" },
+        { "type": "cultural", "name": "Regional documentation", "reference": "5 regional variants documented from ethnographic food studies across India" }
+      ]
+    },
+    {
+      "id": "drink_003",
+      "name": "Coconut Water",
+      "name_hi": "नारियल पानी",
+      "scientific_name": "Cocos nucifera (endosperm liquid)",
+      "image_url": "https://images.unsplash.com/photo-1536657464919-892534f60d6e?w=600",
+      "image_alt": "Fresh tender coconut with straw",
+      "category": "natural_hydrator",
+      "thermal_effect": "cooling",
+      "calories_per_serving": 46,
+      "serving_size_ml": 250,
+      "hydration_score": 98,
+      "electrolyte_restoration": "very_high",
+      "best_for_temp_range": [30, 50],
+      "best_time_of_day": ["morning", "afternoon"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regional_origin": "Coastal India (Kerala, Karnataka, Tamil Nadu, Goa, Maharashtra, Odisha, West Bengal, Andhra Pradesh)",
+      "regions": ["south", "west", "east", "all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": ["tree_nuts"],
+      "tags": ["natural", "electrolyte", "instant", "premium"],
+
+      "nutrition_per_serving_250ml": {
+        "source": "USDA FDC #170174",
+        "energy_kcal": 46,
+        "protein_g": 1.7,
+        "fat_g": 0.5,
+        "carbohydrate_g": 8.9,
+        "fiber_g": 2.6,
+        "vitamin_c_mg": 5.8,
+        "potassium_mg": 600,
+        "magnesium_mg": 60,
+        "sodium_mg": 252,
+        "calcium_mg": 58
+      },
+
+      "why_recommended_in_summer": "Coconut water is nature's isotonic drink — its electrolyte profile (especially potassium at 600mg/250ml) closely matches human plasma, making it more effective for rehydration than plain water. A 2012 study in the Journal of the International Society of Sports Nutrition found coconut water rehydrated as effectively as commercial sports drinks after exercise-induced dehydration, with less stomach upset. The natural sugars (glucose, fructose, sucrose) provide immediate energy without the crash of processed sugars. In Ayurveda, tender coconut (daab) is classified as 'hridya' (beneficial for the heart) and 'trishna-nashaka' (thirst-destroying). It is sterile inside the coconut, making it safe even in areas with contaminated water supply — a critical advantage in rural India during heatwaves.",
+
+      "properties": {
+        "cooling_score": 10,
+        "hydration_index": 10,
+        "cost_per_serving_inr": 30,
+        "shelf_stable": false,
+        "is_isotonic": true,
+        "osmolality_mOsm_kg": 282,
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "active_compounds": "Natural electrolytes (K, Na, Mg), Cytokinins (plant hormones with anti-aging properties)"
+      },
+
+      "preparation": {
+        "method": "no preparation needed",
+        "prep_time_min": 0,
+        "ingredients": [
+          { "item": "Fresh tender coconut", "quantity": "1 coconut (~300-400ml water)", "notes": "Choose green tender coconuts (daab), not brown mature ones" }
+        ],
+        "steps": [
+          "Buy fresh tender coconut from a street vendor or store.",
+          "Vendor will cut the top open — drink directly with a straw.",
+          "After drinking the water, ask vendor to scrape the soft malai (flesh) — also cooling and nutritious.",
+          "If buying packed coconut water: check for no added sugar and preservatives."
+        ],
+        "storage_tip": "Drink immediately once opened. Coconut water oxidizes and loses nutrients within 30 minutes of exposure to air. Packaged coconut water is a compromise — fresh is always superior.",
+        "variations": {
+          "Coconut + sabja": "Add soaked sabja seeds for extra cooling",
+          "Coconut + lemon": "Squeeze half a lemon for Vitamin C boost",
+          "Nariyal pani + mint": "Muddle mint leaves into coconut water"
+        }
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "USDA FoodData Central", "reference": "FDC ID 170174, Coconut water" },
+        { "type": "research", "name": "Journal of the International Society of Sports Nutrition", "reference": "Kalman DS et al. — Comparison of coconut water and sports drink on rehydration (2012)" },
+        { "type": "research", "name": "Molecules (MDPI)", "reference": "Coconut water composition and bioactive compounds review (2009)" },
+        { "type": "ayurvedic", "name": "Bhavaprakasha Nighantu", "reference": "Narikela Varga — tender coconut water as trishna-nashaka" },
+        { "type": "health_claim", "name": "NDMA Heatwave Guidelines 2024", "reference": "Coconut water recommended as primary hydration source during heatwave" }
+      ]
+    },
+    {
+      "id": "drink_004",
+      "name": "Aam Panna (Raw Mango Drink)",
+      "name_hi": "आम पन्ना / कैरी पन्हा",
+      "scientific_name": "Mangifera indica (unripe fruit)",
+      "image_url": "https://images.unsplash.com/photo-1546173159-315724a31696?w=600",
+      "image_alt": "Glass of green aam panna garnished with mint",
+      "category": "traditional_cooler",
+      "thermal_effect": "cooling",
+      "calories_per_serving": 80,
+      "serving_size_ml": 250,
+      "hydration_score": 85,
+      "electrolyte_restoration": "high",
+      "best_for_temp_range": [38, 50],
+      "best_time_of_day": ["afternoon", "evening"],
+      "availability_months": [3, 4, 5, 6],
+      "regional_origin": "Maharashtra / North India",
+      "regions": ["north", "west", "central"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["heatstroke-prevention", "seasonal", "vitamin-rich"],
+
+      "nutrition_per_serving_250ml": {
+        "source": "Calculated from IFCT 2017 (E042 raw mango) + recipe proportions",
+        "energy_kcal": 80,
+        "protein_g": 0.5,
+        "fat_g": 0.2,
+        "carbohydrate_g": 20,
+        "fiber_g": 0.8,
+        "vitamin_c_mg": 45,
+        "potassium_mg": 120,
+        "magnesium_mg": 8,
+        "sodium_mg": 250,
+        "calcium_mg": 10
+      },
+
+      "why_recommended_in_summer": "Aam panna is one of very few traditional drinks with documented heatstroke-prevention claims supported by both Ayurvedic tradition and basic nutritional science. Raw (unripe) mango is exceptionally rich in Vitamin C — up to 45mg per glass — which is critical for immune function during heat stress. The combination of sugar, salt, and citric acid creates a natural oral rehydration solution. The organic acids (citric, malic) in raw mango stimulate digestion and prevent the nausea common during extreme heat. Black salt adds iron and sulfur compounds. This drink is so deeply embedded in Indian heat-survival culture that it has been recommended in official NDMA heatwave guidelines. Each region has its own variant — Maharashtra boils the mango, Bihar and UP roast it on open flame for a smoky flavor.",
+
+      "properties": {
+        "cooling_score": 9,
+        "hydration_index": 8,
+        "cost_per_serving_inr": 8,
+        "shelf_stable": false,
+        "ayurvedic_virya": "Sheeta (cooling) — unique because ripe mango is Ushna (heating)",
+        "active_compounds": "Ascorbic acid (Vitamin C 45mg), Citric acid, Malic acid, Pectin"
+      },
+
+      "preparation": {
+        "method": "cooked + blended",
+        "prep_time_min": 30,
+        "ingredients": [
+          { "item": "Raw green mangoes", "quantity": "2 medium", "notes": "Must be unripe/green — ripe mangoes are heating" },
+          { "item": "Sugar or jaggery", "quantity": "4-5 tbsp", "notes": "Jaggery adds iron; adjust to taste" },
+          { "item": "Black salt (kala namak)", "quantity": "1/2 tsp", "notes": "Essential — do not substitute with table salt" },
+          { "item": "Roasted cumin powder", "quantity": "1/2 tsp", "notes": "Digestive and flavor cornerstone" },
+          { "item": "Mint leaves", "quantity": "10-12 leaves", "notes": "For garnish and additional cooling" },
+          { "item": "Water", "quantity": "500ml", "notes": "Cold" }
+        ],
+        "steps": [
+          "Boil or pressure cook raw mangoes until soft (about 15 min). OR roast on direct flame until skin chars (traditional method).",
+          "Cool completely. Peel and extract all the pulp.",
+          "Blend pulp with sugar, black salt, roasted cumin, and mint until smooth.",
+          "Add cold water and mix well. Adjust sweetness and salt.",
+          "Strain if desired (optional). Serve chilled with ice and mint garnish."
+        ],
+        "storage_tip": "Aam panna concentrate (without water) can be stored in the fridge for 5-7 days. Add water when serving. The concentrate can also be frozen in ice cube trays for up to a month.",
+        "variations": {
+          "Maharashtra (Panha)": "Boiled mango pulp with jaggery, saffron, and cardamom",
+          "Uttar Pradesh": "Mango roasted on open flame (bharta style) for smoky flavor",
+          "Bengal": "Subtle addition of mustard paste",
+          "Gujarat (Baflo)": "With chaat masala and extra black salt"
+        }
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry E042, Mango raw (Mangifera indica)" },
+        { "type": "health_claim", "name": "NDMA Heatwave Guidelines 2024", "reference": "Aam panna specifically recommended for heatstroke prevention" },
+        { "type": "research", "name": "Food Chemistry", "reference": "Vitamin C and organic acid content in Indian mango varieties (raw vs ripe)" },
+        { "type": "ayurvedic", "name": "Bhavaprakasha Nighantu", "reference": "Amra Varga — raw mango (amrataka) as cooling unlike ripe mango" },
+        { "type": "cultural", "name": "Saveur Magazine / Zee Zest", "reference": "Regional aam panna traditions documented across Maharashtra, UP, Bengal, Gujarat" }
+      ]
+    },
+    {
+      "id": "drink_005",
+      "name": "Sattu Sharbat",
+      "name_hi": "सत्तू का शरबत",
+      "scientific_name": "Cicer arietinum (roasted flour suspension)",
+      "image_url": "https://images.unsplash.com/photo-1544252890-c9bfc0176aeb?w=600",
+      "image_alt": "Glass of sattu drink with lemon and mint",
+      "category": "traditional_cooler",
+      "thermal_effect": "cooling",
+      "calories_per_serving": 120,
+      "serving_size_ml": 300,
+      "hydration_score": 80,
+      "electrolyte_restoration": "medium",
+      "best_for_temp_range": [38, 50],
+      "best_time_of_day": ["morning", "afternoon"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regional_origin": "Bihar / Uttar Pradesh / Jharkhand / Madhya Pradesh",
+      "regions": ["north", "east", "central"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["protein-rich", "energy", "outdoor-workers", "filling"],
+
+      "nutrition_per_serving_300ml": {
+        "source": "Calculated from IFCT 2017 (B011 roasted Bengal gram) + recipe proportions (2 tbsp sattu ~20g)",
+        "energy_kcal": 120,
+        "protein_g": 5.2,
+        "fat_g": 1.4,
+        "carbohydrate_g": 18,
+        "fiber_g": 2.8,
+        "vitamin_c_mg": 8,
+        "potassium_mg": 180,
+        "magnesium_mg": 28,
+        "sodium_mg": 200,
+        "calcium_mg": 32,
+        "iron_mg": 1.2
+      },
+
+      "why_recommended_in_summer": "Sattu is India's original protein shake — a roasted chickpea flour that has sustained farmers and laborers in the Gangetic plains through the most brutal summers for centuries. With 5.2g protein per glass, it provides sustained energy without the metabolic heat produced by digesting meat or eggs. The roasting process makes the proteins highly bioavailable and easy to digest. Sattu has a low glycemic index, preventing energy crashes in heat. The drink provides both hydration (water base) and nutrition (protein, fiber, iron) — making it the ideal replacement for a heavy meal when appetite drops in extreme heat. At roughly ₹5-7 per glass, it's one of the most cost-effective protein sources available. Traditional knowledge systems of Bihar classify sattu as 'thanda' (cold in nature), and modern analysis confirms its relatively low thermic effect compared to other protein sources.",
+
+      "properties": {
+        "cooling_score": 7,
+        "hydration_index": 7,
+        "cost_per_serving_inr": 7,
+        "shelf_stable": true,
+        "protein_per_serving_g": 5.2,
+        "glycemic_index": 28,
+        "ayurvedic_virya": "Sheeta (cooling)",
+        "active_compounds": "Plant protein, Iron (1.2mg), Dietary fiber"
+      },
+
+      "preparation": {
+        "method": "mixed (no cook)",
+        "prep_time_min": 3,
+        "ingredients": [
+          { "item": "Sattu flour (roasted gram flour)", "quantity": "2 tablespoons (20g)", "notes": "Buy organic sattu or chane ka sattu from local store" },
+          { "item": "Cold water", "quantity": "300ml", "notes": "Chilled" },
+          { "item": "Lemon juice", "quantity": "1 tbsp", "notes": "Adds Vitamin C and tang" },
+          { "item": "Black salt", "quantity": "1/4 tsp", "notes": "Essential for the traditional taste" },
+          { "item": "Roasted cumin powder", "quantity": "1/4 tsp", "notes": "Digestive aid" },
+          { "item": "Mint leaves", "quantity": "5-6 leaves", "notes": "Garnish; muddle for extra flavor" },
+          { "item": "Green chilli", "quantity": "1 small, optional", "notes": "Finely chopped; adds kick" }
+        ],
+        "steps": [
+          "Add sattu flour to cold water in a glass or jug.",
+          "Whisk or stir vigorously to break up any lumps — this is important.",
+          "Add lemon juice, black salt, and roasted cumin powder.",
+          "Mix well again. The sattu will settle, so stir before every sip.",
+          "Garnish with mint leaves and optional green chilli.",
+          "Serve immediately — do not store."
+        ],
+        "storage_tip": "Dry sattu flour lasts months in an airtight container. Once mixed with water, drink immediately — it settles and can ferment in heat.",
+        "variations": {
+          "Sweet sattu (Meetha)": "Replace salt and cumin with jaggery or sugar — popular as a dessert drink",
+          "Savory sattu (Namkeen)": "The recipe above — the more common version",
+          "Sattu paratha filling": "Mix sattu with onion, chilli, and spices — stuff in dough for protein-rich flatbread"
+        }
+      },
+
+      "data_sources": [
+        { "type": "nutrition", "name": "IFCT 2017 — NIN, ICMR Hyderabad", "reference": "Entry B011, Bengal gram roasted (Cicer arietinum) — base for sattu flour" },
+        { "type": "cultural", "name": "Saveur Magazine", "reference": "Regional documentation: sattu as traditional summer drink of Bihar, UP, Jharkhand" },
+        { "type": "research", "name": "Journal of Food Science and Technology", "reference": "Nutritional composition and glycemic index of sattu (roasted chickpea flour)" },
+        { "type": "cultural", "name": "Fun Food Frolic / Veg Recipes of India", "reference": "Traditional recipe documentation and variations" },
+        { "type": "health_claim", "name": "ICMR dietary guidelines", "reference": "Roasted gram flour as affordable protein source — recommended in public health programs" }
+      ]
+    },
+    {
+      "id": "drink_006",
+      "name": "ORS (Oral Rehydration Solution)",
+      "name_hi": "ओआरएस",
+      "scientific_name": "WHO-formulated electrolyte solution",
+      "image_url": "https://images.unsplash.com/photo-1584308972272-9e4e7e3b3b1c?w=600",
+      "image_alt": "ORS packet being dissolved in a glass of water",
+      "category": "medical_hydration",
+      "thermal_effect": "neutral",
+      "calories_per_serving": 15,
+      "serving_size_ml": 200,
+      "hydration_score": 100,
+      "electrolyte_restoration": "very_high",
+      "best_for_temp_range": [40, 50],
+      "best_time_of_day": ["morning", "afternoon", "evening"],
+      "availability_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "regional_origin": "Medical standard (WHO/UNICEF)",
+      "regions": ["all"],
+      "is_vegetarian": true,
+      "is_vegan": true,
+      "allergens": [],
+      "tags": ["emergency", "medical", "dehydration", "essential"],
+
+      "nutrition_per_serving_200ml": {
+        "source": "WHO ORS formulation standard (2006 low-osmolarity formula)",
+        "energy_kcal": 15,
+        "protein_g": 0,
+        "fat_g": 0,
+        "carbohydrate_g": 3.5,
+        "fiber_g": 0,
+        "vitamin_c_mg": 0,
+        "potassium_mg": 150,
+        "magnesium_mg": 0,
+        "sodium_mg": 172,
+        "calcium_mg": 0,
+        "glucose_g": 3.5,
+        "chloride_mg": 130
+      },
+
+      "why_recommended_in_summer": "ORS is the gold standard for treating dehydration from any cause, including heat-related illness. The WHO-formulated low-osmolarity ORS uses a specific ratio of glucose to sodium that activates the sodium-glucose co-transport mechanism in the small intestine, pulling water into the bloodstream far more efficiently than plain water. During a heatwave, when the body loses 1-2 liters of sweat per hour in extreme conditions, ORS can mean the difference between recovery and hospitalization. The NDMA specifically recommends keeping ORS packets at home during declared heatwaves. Available at every Indian pharmacy for ₹5-15 per packet, ORS is the single most important item in a heat emergency kit. It should be the FIRST thing given to anyone showing signs of heat exhaustion.",
+
+      "properties": {
+        "cooling_score": 5,
+        "hydration_index": 10,
+        "cost_per_serving_inr": 5,
+        "shelf_stable": true,
+        "osmolality_mOsm_kg": 245,
+        "is_isotonic": true,
+        "ayurvedic_virya": "Neutral"
+      },
+
+      "preparation": {
+        "method": "dissolve",
+        "prep_time_min": 1,
+        "ingredients": [
+          { "item": "ORS packet", "quantity": "1 packet", "notes": "Available at any pharmacy without prescription. Brands: Electral, Enerzal, WHO ORS" },
+          { "item": "Clean drinking water", "quantity": "1 liter (as per packet instructions)", "notes": "Must be clean/boiled/filtered — do NOT use unclean water" }
+        ],
+        "steps": [
+          "Wash hands before preparation.",
+          "Dissolve the entire ORS packet in 1 liter of clean drinking water.",
+          "Stir until fully dissolved. Do NOT add sugar, salt, or any other ingredient.",
+          "Sip small amounts frequently — do NOT gulp large quantities at once.",
+          "Discard unused solution after 24 hours."
+        ],
+        "storage_tip": "Dry packets last years in a cool place. Once dissolved, use within 24 hours. Keep prepared solution covered and away from direct sunlight.",
+        "emergency_note": "If ORS packets are unavailable, make at home: 6 teaspoons sugar + 1/2 teaspoon salt in 1 liter clean water. This is a temporary substitute only — get proper ORS as soon as possible."
+      },
+
+      "data_sources": [
+        { "type": "medical", "name": "World Health Organization", "reference": "WHO/UNICEF ORS formulation guidelines, 2006 low-osmolarity formula" },
+        { "type": "health_claim", "name": "NDMA Heatwave Guidelines 2024", "reference": "ORS recommended as essential heat emergency supply" },
+        { "type": "research", "name": "The Lancet", "reference": "Oral rehydration therapy: sodium-glucose co-transport mechanism and clinical efficacy" },
+        { "type": "medical", "name": "Indian Academy of Pediatrics", "reference": "ORS guidelines for heat-related dehydration in children" }
+      ]
+    }
+  ],
+
+  "foods_to_avoid": [
+    {
+      "id": "avoid_001",
+      "name": "Spicy Foods (excess chilli, pepper)",
+      "name_hi": "अधिक मसालेदार खाना",
+      "image_url": "https://images.unsplash.com/photo-1583119022894-919a68a3d0e3?w=600",
+      "image_alt": "Red chilli peppers",
+      "category": "cooking_style",
+      "severity": "moderate",
+
+      "why_to_avoid": "Capsaicin in chillies activates TRPV1 heat receptors, triggering a thermoregulatory response that includes sweating and increased peripheral blood flow. While this provides temporary cooling through evaporation, it accelerates fluid loss and can worsen dehydration in already hot conditions. Spicy foods also increase metabolic heat generation and can cause acidity, heartburn, and GI distress — symptoms that compound the discomfort of heat exposure. Ayurveda classifies most pungent spices as 'Ushna virya' (heating potency) that directly aggravate Pitta dosha in summer.",
+
+      "alternatives": ["Use cooling spices instead: cumin, coriander, fennel, cardamom", "Reduce chilli quantity by half or more in regular recipes", "Add curd or raita as a cooling counterbalance when eating spiced food"],
+
+      "data_sources": [
+        { "type": "research", "name": "European Journal of Pharmacology", "reference": "Capsaicin activation of TRPV1 receptors and thermoregulatory response" },
+        { "type": "medical", "name": "Tata 1mg / Apollo Diagnostics", "reference": "Foods to avoid during heatwave — spicy foods increase body temperature" },
+        { "type": "ayurvedic", "name": "Charaka Samhita", "reference": "Katu rasa (pungent taste) aggravates Pitta — contraindicated in Grishma Ritu" }
+      ]
+    },
+    {
+      "id": "avoid_002",
+      "name": "Fried Foods (pakora, samosa, chips)",
+      "name_hi": "तला हुआ खाना",
+      "image_url": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=600",
+      "image_alt": "Fried snacks and pakoras",
+      "category": "cooking_style",
+      "severity": "high",
+
+      "why_to_avoid": "Deep-fried foods are the worst dietary choice during extreme heat for three reasons: (1) Fat is the slowest macronutrient to digest, keeping the digestive system working hard for hours — this process generates significant metabolic heat (thermic effect of fat is 0-3% but the prolonged digestion time compounds it). (2) Oil-heavy foods cause sluggishness and reduced alertness, impairing the body's ability to recognize and respond to heat stress symptoms. (3) Excessive oil consumption in summer clogs skin pores, combining with sweat to cause acne, boils, and heat rash. Healthkart and NDMA guidelines both explicitly recommend avoiding fried foods during heatwaves.",
+
+      "alternatives": ["Roasted makhana (fox nuts) — light, cooling, and protein-rich", "Baked snacks instead of fried", "Fresh fruit chaat with chaat masala", "Steamed sprouts with lemon"],
+
+      "data_sources": [
+        { "type": "medical", "name": "Healthkart / Apollo Diagnostics", "reference": "Foods to avoid in summer — fried foods hamper digestion and raise body temperature" },
+        { "type": "health_claim", "name": "NDMA Heatwave Guidelines", "reference": "Avoid heavy, oily foods during heatwave" },
+        { "type": "research", "name": "British Journal of Nutrition", "reference": "Thermic effect of food — dietary fat and metabolic heat generation" }
+      ]
+    },
+    {
+      "id": "avoid_003",
+      "name": "Alcohol",
+      "name_hi": "शराब",
+      "image_url": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600",
+      "image_alt": "Alcoholic drinks",
+      "category": "beverage",
+      "severity": "critical",
+
+      "why_to_avoid": "Alcohol is a potent diuretic — it suppresses antidiuretic hormone (ADH/vasopressin), causing the kidneys to excrete more water than is consumed. A single beer can result in a net fluid loss of 350ml. In extreme heat, where the body is already losing 1-2 liters of sweat per hour, alcohol consumption can rapidly accelerate dehydration to dangerous levels. Alcohol also impairs thermoregulation by causing vasodilation (blood vessel expansion), which can paradoxically increase core body temperature. It impairs judgment, reducing the person's ability to recognize symptoms of heat exhaustion. Multiple studies confirm that alcohol consumption during heatwaves significantly increases the risk of heat-related death. This is the single most dangerous dietary choice during extreme heat.",
+
+      "alternatives": ["Aam panna — tangy and satisfying like a cocktail", "Kokum sherbet — complex flavor profile", "Jaljeera — spiced and appetizing", "Sattu sharbat — filling and energizing"],
+
+      "data_sources": [
+        { "type": "research", "name": "Journal of Clinical Investigation", "reference": "Alcohol suppression of ADH and diuretic effects — mechanism of dehydration" },
+        { "type": "medical", "name": "Tata 1mg Health", "reference": "Alcohol explicitly listed as food to avoid during heatwave" },
+        { "type": "research", "name": "International Journal of Environmental Research and Public Health", "reference": "Alcohol consumption as risk factor for heat-related mortality during heatwaves" },
+        { "type": "health_claim", "name": "NDMA / WHO", "reference": "Both organizations recommend avoiding alcohol during heat emergencies" }
+      ]
+    },
+    {
+      "id": "avoid_004",
+      "name": "Tea and Coffee (excess)",
+      "name_hi": "अधिक चाय / कॉफ़ी",
+      "image_url": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600",
+      "image_alt": "Cup of hot chai tea",
+      "category": "beverage",
+      "severity": "moderate",
+
+      "why_to_avoid": "Caffeine is a methylxanthine that acts as a mild diuretic at doses above 300mg (roughly 3+ cups of chai). While moderate caffeine consumption (1-2 cups) may not cause significant net fluid loss, the hot temperature of chai and coffee raises core body temperature at a time when the body is struggling to cool down. Caffeine also stimulates the central nervous system, increasing heart rate and metabolic activity — both of which generate additional body heat. The tannic acid in tea can cause acidity, which worsens in summer. In Ayurveda, both tea and coffee are classified as 'Ushna' (heating) substances that aggravate Pitta.",
+
+      "alternatives": ["Buttermilk (chaas) — the Indian replacement for afternoon chai", "Coconut water", "Mint tea (herbal, zero caffeine) — provides ritual without the heat", "Nimbu pani"],
+
+      "data_sources": [
+        { "type": "research", "name": "Journal of Science in Food and Agriculture", "reference": "Caffeine as diuretic: dose-dependent effects on fluid balance" },
+        { "type": "medical", "name": "Zee News / Apollo Diagnostics", "reference": "Caffeine increases body heat — reduce intake during summer" },
+        { "type": "ayurvedic", "name": "Modern Ayurvedic practitioners", "reference": "Tea and coffee classified as Pitta-aggravating beverages" }
+      ]
+    },
+    {
+      "id": "avoid_005",
+      "name": "Stale / Leftover Food",
+      "name_hi": "बासी खाना",
+      "image_url": "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=600",
+      "image_alt": "Leftover food in containers",
+      "category": "food_safety",
+      "severity": "critical",
+
+      "why_to_avoid": "This is a food SAFETY issue, not just nutrition. Bacteria like Salmonella, E. coli, and Staphylococcus aureus double every 20 minutes in the 'danger zone' (4°C–60°C). In Indian summer, ambient temperatures of 40-47°C create the perfect incubator. Food left at room temperature for more than 2 hours in summer is potentially hazardous. Cooked rice is especially dangerous — Bacillus cereus spores survive cooking and germinate rapidly in warm conditions, producing toxins that cause vomiting and diarrhea. Food poisoning during heatwaves is particularly dangerous because the resulting diarrhea and vomiting cause severe dehydration on top of heat-related fluid loss, creating a compounding emergency. Indian summers see a documented 2-3x spike in foodborne illness cases.",
+
+      "alternatives": ["Cook fresh meals in smaller batches — only what you'll eat in one sitting", "Refrigerate cooked food within 30 minutes — do not let it cool at room temperature", "When in doubt, throw it out — the risk is not worth it", "Prefer no-cook meals: curd rice, salads, fruits"],
+
+      "data_sources": [
+        { "type": "medical", "name": "FSSAI (Food Safety and Standards Authority of India)", "reference": "Food safety guidelines during summer — danger zone temperatures and bacterial growth" },
+        { "type": "research", "name": "Indian Journal of Gastroenterology", "reference": "Seasonal spike in food-borne illness during Indian summer months — epidemiological data" },
+        { "type": "medical", "name": "WHO Food Safety", "reference": "Five Keys to Safer Food — temperature control in hot climates" },
+        { "type": "health_claim", "name": "Healthkart", "reference": "Stale food spoils faster in summer; leading cause of food poisoning in India" }
+      ]
+    }
+  ],
+
+  "hydration_rules": {
+    "source": "Derived from WHO hydration guidelines + Indian Journal of Public Health heat recommendations",
+    "base_water_ml_per_kg": 35,
+    "temperature_multipliers": {
+      "below_30": 1.0,
+      "30_to_37": 1.2,
+      "37_to_42": 1.5,
+      "above_42": 1.8
+    },
+    "activity_multipliers": {
+      "sedentary_indoor": 1.0,
+      "light_indoor": 1.1,
+      "moderate_outdoor": 1.4,
+      "heavy_outdoor": 1.8
+    },
+    "reminder_intervals_min": {
+      "below_35": 60,
+      "35_to_40": 45,
+      "40_to_45": 30,
+      "above_45": 20
+    },
+    "data_sources": [
+      { "type": "medical", "name": "WHO", "reference": "Water requirements in hot environments — occupational health guidelines" },
+      { "type": "research", "name": "Indian Journal of Public Health", "reference": "Fluid replacement recommendations during Indian heatwaves" }
+    ]
+  },
+
+  "meal_plans": {
+    "source": "Compiled from NDMA guidelines + Ayurvedic Ritucharya (seasonal regimen) + nutritionist recommendations from AIIMS, Apollo, and Amrita Hospital",
+    "moderate_heat_30_37": {
+      "breakfast": ["Fresh seasonal fruit bowl + curd", "Poha with vegetables and lemon", "Idli with coconut chutney"],
+      "lunch": ["Rice + dal + cucumber raita + salad", "Curd rice with pickle and papad", "Roti + lauki sabzi + buttermilk"],
+      "snack": ["Coconut water", "Nimbu pani", "Fruit chaat with chaat masala"],
+      "dinner": ["Khichdi with coriander chutney", "Light roti + moong dal", "Rice + sambhar + curd"]
+    },
+    "hot_37_42": {
+      "breakfast": ["Watermelon + muskmelon bowl", "Curd with flattened rice (poha)", "Sattu sharbat + 2 fruits"],
+      "lunch": ["Curd rice + mint chutney", "Light khichdi + buttermilk", "Rice + bottle gourd curry + raita"],
+      "snack": ["Aam panna", "Buttermilk (chaas)", "Sabja lemon water", "Watermelon juice"],
+      "dinner": ["Moong dal + rice + salad", "Khichdi + papad + curd", "Roti + lauki + curd"]
+    },
+    "extreme_heat_42_plus": {
+      "breakfast": ["Watermelon juice + 3-4 soaked almonds only", "Light curd + fruit bowl", "ORS if feeling dehydrated"],
+      "lunch": ["Curd rice ONLY — skip heavy curries entirely", "Buttermilk + light salad", "Skip meal if not hungry — hydrate with coconut water instead"],
+      "snack": ["ORS if needed", "Coconut water every 2 hours", "Watermelon slices", "Nimbu pani with extra black salt"],
+      "dinner": ["Very light khichdi — smaller portion", "Curd + rice + mint", "Fruit meal if appetite is low — do not force heavy food"]
+    }
+  }
+}
