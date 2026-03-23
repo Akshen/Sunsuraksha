@@ -44,16 +44,17 @@ export async function updateProfile(
   return data as UserProfile;
 }
 
-/** Mark onboarding as complete */
+/** Mark onboarding as complete — all fields are optional */
 export async function completeOnboarding(
   userId: string,
   profileData: {
-    name: string;
-    city: string;
-    age: number;
-    weight_kg: number;
-    job_type: 'indoor' | 'outdoor' | 'mixed';
-    diet_preference: 'vegetarian' | 'vegan' | 'non-vegetarian';
+    name?: string;
+    city?: string;
+    age?: number;
+    gender?: 'male' | 'female' | 'other';
+    weight_kg?: number;
+    body_type?: 'slim' | 'average' | 'athletic' | 'heavy';
+    diet_preference?: 'vegetarian' | 'vegan' | 'non-vegetarian';
   }
 ): Promise<UserProfile | null> {
   return updateProfile(userId, {

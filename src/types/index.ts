@@ -5,15 +5,17 @@
 // ---- User ----
 export interface UserProfile {
   id: string;
-  name: string;
-  city: string;
-  age: number;
-  weight_kg: number;
-  job_type: 'indoor' | 'outdoor' | 'mixed';
-  diet_preference: 'vegetarian' | 'vegan' | 'non-vegetarian';
+  name: string | null;
+  city: string | null;
+  age: number | null;
+  gender: 'male' | 'female' | 'other' | null;
+  weight_kg: number | null;
+  body_type: 'slim' | 'average' | 'athletic' | 'heavy' | null;
+  diet_preference: 'vegetarian' | 'vegan' | 'non-vegetarian' | null;
   language: 'en' | 'hi';
   onboarded: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 // ---- Weather ----
