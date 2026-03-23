@@ -1,37 +1,38 @@
 /**
  * SunSuraksha App Configuration
- * 
- * API keys and feature flags.
- * In production, move secrets to environment variables.
+ *
+ * All secrets are read from environment variables.
+ * Expo automatically exposes variables prefixed with EXPO_PUBLIC_
+ *
+ * SETUP:
+ * 1. Copy .env.example to .env
+ * 2. Fill in your real keys
+ * 3. Never commit .env to Git
  */
 
 export const Config = {
-  // OpenWeatherMap — free tier gives 1000 calls/day
-  // Sign up at: https://openweathermap.org/api
-  OPENWEATHER_API_KEY: 'YOUR_API_KEY_HERE',
+  // Read from environment — Expo exposes EXPO_PUBLIC_ vars automatically
+  SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL ?? '',
+  SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '',
+  OPENWEATHER_API_KEY: process.env.EXPO_PUBLIC_OPENWEATHER_API_KEY ?? '',
   OPENWEATHER_BASE_URL: 'https://api.openweathermap.org/data/2.5',
 
-  // Supabase — project credentials
-  // Get these from: https://supabase.com/dashboard → Settings → API
-  SUPABASE_URL: 'YOUR_SUPABASE_URL_HERE',
-  SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY_HERE',
-
-  // Feature flags — toggle features during development
+  // Feature flags
   features: {
-    pushNotifications: false,   // Enable in Step 12
-    weatherApi: false,          // Enable in Step 7
-    supabaseAuth: false,        // Enable in Step 4
-    hydrationTracker: false,    // Enable in Step 9
-    sosScreen: false,           // Enable in Step 11
+    pushNotifications: false,
+    weatherApi: false,
+    supabaseAuth: true,
+    hydrationTracker: false,
+    sosScreen: false,
   },
 
   // App defaults
   defaults: {
     city: 'Delhi',
     language: 'en',
-    tempUnit: 'celsius',       // Always celsius for India
-    waterGoalMl: 3000,         // 3L default daily target
-    reminderIntervalMin: 45,   // Default reminder interval
+    tempUnit: 'celsius',
+    waterGoalMl: 3000,
+    reminderIntervalMin: 45,
   },
 
   // Heat score thresholds (°C)
