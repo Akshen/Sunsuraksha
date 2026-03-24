@@ -1,7 +1,8 @@
 /**
  * Root Layout
- * 
- * Wraps the entire app with providers and sets the status bar.
+ *
+ * Uses Stack navigator for the root. All screens except (tabs) are modals/overlays.
+ * The key fix: explicitly set headerShown:false and ensure no extra navigation chrome.
  */
 
 import { Stack } from 'expo-router';
@@ -17,16 +18,26 @@ export default function RootLayout() {
           headerShown: false,
           contentStyle: { backgroundColor: Colors.background },
           animation: 'slide_from_right',
+          navigationBarHidden: true,
         }}
       >
-        <Stack.Screen name="(tabs)" />
         <Stack.Screen
-          name="onboarding/index"
-          options={{ animation: 'fade' }}
+          name="(tabs)"
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="onboarding"
+          options={{
+            headerShown: false,
+            animation: 'fade',
+          }}
         />
         <Stack.Screen
           name="sos"
           options={{
+            headerShown: false,
             presentation: 'modal',
             animation: 'slide_from_bottom',
           }}
