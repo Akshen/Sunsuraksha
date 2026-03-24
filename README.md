@@ -208,14 +208,28 @@ If future tests need Supabase access:
 - [x] Step 4: Supabase setup (auth + profiles + hydration)
 - [x] Step 5: Onboarding screen (name, city, gender, age, body type, weight, diet — all optional)
 - [x] Step 6: Home dashboard + heat score ring + action card + hourly timeline
-- [ ] Step 7: Weather API integration (OpenWeatherMap)
+- [x] Step 7: Weather API integration (OpenWeatherMap + 30 Indian city coords + useWeather hook)
 - [x] Step 8: Food & drink recommendation screen (Eat / Drink / Avoid tabs)
 - [x] Step 9: Hydration tracker (progress ring, quick-add, log history, custom modal)
-- [ ] Step 10: Daily planner
-- [ ] Step 11: SOS emergency screen
+- [x] Step 10: Daily planner (time blocks, safety levels, meal suggestions)
+- [x] Step 11: SOS emergency screen (symptom checker, first aid, emergency helplines)
 - [ ] Step 12: Push notifications
 - [ ] Step 13: Testing + bug fixes
 - [ ] Step 14: Build + deploy beta
+
+## Emergency Helpline Numbers
+
+SunSuraksha integrates the following all-India emergency numbers in the SOS screen:
+
+| Number | Service | Availability |
+|--------|---------|-------------|
+| **112** | Universal Emergency (police, fire, ambulance) | All states and UTs |
+| **108** | Free ambulance + disaster management (GVK EMRI) | 35 states/UTs — covers 1 billion+ people |
+| **102** | Government ambulance | Nationwide |
+| **104** | Health advice helpline (not ambulance) | Multiple states |
+| **1078** | NDMA disaster helpline | Nationwide |
+
+**About 108:** Launched in 2005 in Andhra Pradesh by EMRI (Emergency Management and Research Institute), the 108 service is now the world's largest ambulatory care provider. It operates 10,000+ ambulances with 66,000+ employees across 17+ partnered states including Delhi, Maharashtra, Gujarat, Tamil Nadu, Karnataka, UP, Rajasthan, Kerala, and more. The service is completely free for emergency situations, with trained EMTs on every ambulance. Average dispatch time is 80-90 seconds after call connection. Operated as a public-private partnership with state governments, funded by the National Health Mission under the Ministry of Health and Family Welfare.
 
 ## Contributing
 
