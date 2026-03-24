@@ -28,7 +28,7 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="onboarding"
+          name="onboarding/index"
           options={{
             headerShown: false,
             animation: 'fade',

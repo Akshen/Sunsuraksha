@@ -18,10 +18,10 @@ import { Platform } from 'react-native';
 
 // ---- Configure notification behavior ----
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
+  handleNotification: async (): Promise<Notifications.NotificationBehavior> => ({
+    shouldShowAlert: true as const,
+    shouldPlaySound: true as const,
+    shouldSetBadge: false as const,
   }),
 });
 
