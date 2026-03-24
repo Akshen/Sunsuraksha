@@ -11,3 +11,4 @@ export { supabase } from './supabase';
 export { signUp, signIn, signOut, getSession, getCurrentUserId, onAuthStateChange } from './auth';
 export { getProfile, updateProfile, completeOnboarding } from './profile';
 export { logWater, getTodayLogs, getTodayTotal, deleteLog } from './hydration';
+export { fetchWeather, fetchWeatherByCoords } from './weather';

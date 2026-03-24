@@ -206,11 +206,11 @@ If future tests need Supabase access:
 - [x] Step 2: UI components + testing + GitHub CI/CD
 - [x] Step 3: Bundle food/drink database + query layer
 - [x] Step 4: Supabase setup (auth + profiles + hydration)
-- [ ] Step 5: Onboarding screen
-- [ ] Step 6: Home dashboard + heat score
-- [ ] Step 7: Weather API integration
-- [ ] Step 8: Food & drink recommendation screen
-- [ ] Step 9: Hydration tracker
+- [x] Step 5: Onboarding screen (name, city, gender, age, body type, weight, diet — all optional)
+- [x] Step 6: Home dashboard + heat score ring + action card + hourly timeline
+- [ ] Step 7: Weather API integration (OpenWeatherMap)
+- [x] Step 8: Food & drink recommendation screen (Eat / Drink / Avoid tabs)
+- [x] Step 9: Hydration tracker (progress ring, quick-add, log history, custom modal)
 - [ ] Step 10: Daily planner
 - [ ] Step 11: SOS emergency screen
 - [ ] Step 12: Push notifications
