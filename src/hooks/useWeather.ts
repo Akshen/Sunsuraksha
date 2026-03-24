@@ -1,19 +1,26 @@
 /**
  * useWeather — Custom hook for weather data
  *
- * Fetches weather for the user's city, caches in state,
- * auto-refreshes every 15 minutes, and exposes a manual refresh.
+ * Accepts either a city name OR GPS coordinates.
+ * If coords are provided, uses them for more accurate weather.
+ * Auto-refreshes every 15 minutes.
  *
  * Usage:
- *   const { weather, heatScore, loading, refresh } = useWeather('Delhi');
+ *   const { weather, heatScore, loading, refresh } = useWeather({ city: 'Mumbai' });
+ *   const { weather } = useWeather({ coords: { lat: 19.07, lon: 72.87 } });
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { fetchWeather } from '@/services/weather';
+import { fetchWeather, fetchWeatherByCoords } from '@/services/weather';
 import { calculateHeatScore } from '@/utils/heatScore';
 import type { WeatherData, HeatScore } from '@/types';
 
 const REFRESH_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+
+interface UseWeatherParams {
+  city?: string;
+  coords?: { lat: number; lon: number } | null;
+}
 
 interface UseWeatherResult {
   weather: WeatherData | null;
@@ -24,19 +31,19 @@ interface UseWeatherResult {
   lastUpdated: string | null;
 }
 
-export function useWeather(city: string): UseWeatherResult {
+export function useWeather(params: UseWeatherParams): UseWeatherResult {
+  const { city = 'Delhi', coords } = params;
+
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Compute heat score from weather data
   const heatScore = useMemo(() => {
     if (!weather) return null;
     return calculateHeatScore(weather);
   }, [weather]);
 
-  // Format last updated time
   const lastUpdated = useMemo(() => {
     if (!weather) return null;
     return new Date(weather.updated_at).toLocaleTimeString('en-IN', {
@@ -45,11 +52,19 @@ export function useWeather(city: string): UseWeatherResult {
     });
   }, [weather]);
 
-  // Fetch weather data
   const loadWeather = useCallback(async () => {
     try {
       setError(null);
-      const data = await fetchWeather(city);
+      let data: WeatherData;
+
+      if (coords) {
+        // Use GPS coordinates for accurate location-based weather
+        data = await fetchWeatherByCoords(coords.lat, coords.lon);
+      } else {
+        // Fall back to city name lookup
+        data = await fetchWeather(city);
+      }
+
       setWeather(data);
     } catch (err) {
       setError('Failed to load weather data');
@@ -57,19 +72,16 @@ export function useWeather(city: string): UseWeatherResult {
     } finally {
       setLoading(false);
     }
-  }, [city]);
+  }, [city, coords?.lat, coords?.lon]);
 
-  // Manual refresh (for pull-to-refresh)
   const refresh = useCallback(async () => {
     setLoading(true);
     await loadWeather();
   }, [loadWeather]);
 
-  // Initial fetch + auto-refresh
   useEffect(() => {
     loadWeather();
 
-    // Auto-refresh every 15 min
     intervalRef.current = setInterval(loadWeather, REFRESH_INTERVAL_MS);
 
     return () => {

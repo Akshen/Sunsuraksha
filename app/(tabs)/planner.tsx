@@ -15,12 +15,13 @@ import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { ScreenHeader } from '@/components/common';
 import { TimeBlockCard } from '@/components/planner/TimeBlockCard';
 import { useWeather } from '@/hooks/useWeather';
+import { useLocation } from '@/hooks/useLocation';
 import { generateDailyPlan } from '@/utils/dailyPlan';
 import { getMealPlan } from '@/data/foodData';
 
 export default function PlannerScreen() {
-  const userCity = 'Delhi';
-  const { weather, heatScore } = useWeather(userCity);
+  const location = useLocation();
+  const { weather, heatScore } = useWeather({ city: location.city, coords: location.coords });
 
   const feelsLikeC = weather?.feels_like_c ?? 42;
   const currentHour = new Date().getHours();

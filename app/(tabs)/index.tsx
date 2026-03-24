@@ -1,13 +1,14 @@
 /**
  * Home Dashboard
  *
- * The main screen of SunSuraksha. Now powered by real weather data.
- * Falls back to mock data gracefully if API key is not set.
+ * Uses GPS to detect user's city and fetch local weather.
+ * Falls back to Delhi if location permission is denied.
  */
 
 import { ScrollView, View, Text, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing } from '@/constants/theme';
+import { useLocation } from '@/hooks/useLocation';
 import { useWeather } from '@/hooks/useWeather';
 import { HeatScoreRing } from '@/components/home/HeatScoreRing';
 import { ActionCard } from '@/components/home/ActionCard';
@@ -16,17 +17,24 @@ import { QuickActions } from '@/components/home/QuickActions';
 import { WeatherMini } from '@/components/home/WeatherMini';
 
 export default function HomeScreen() {
-  // TODO: Get city from user profile (onboarding data)
-  const userCity = 'Delhi';
+  // Detect user's location via GPS
+  const location = useLocation();
 
-  const { weather, heatScore, loading, refresh, lastUpdated } = useWeather(userCity);
+  // Fetch weather using GPS coords (accurate) or city name (fallback)
+  const { weather, heatScore, loading, refresh, lastUpdated } = useWeather({
+    city: location.city,
+    coords: location.coords,
+  });
 
-  if (loading && !weather) {
+  // Loading state — waiting for location + weather
+  if ((loading || location.loading) && !weather) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
-          <Text style={styles.loadingText}>Checking the heat...</Text>
+          <Text style={styles.loadingText}>
+            {location.loading ? 'Detecting your location...' : 'Checking the heat...'}
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -53,12 +61,16 @@ export default function HomeScreen() {
         refreshControl={
           <RefreshControl
             refreshing={loading}
-            onRefresh={refresh}
+            onRefresh={async () => {
+              await location.refresh();
+              await refresh();
+            }}
             tintColor={Colors.primary}
             colors={[Colors.primary]}
           />
         }
       >
+        {/* Header */}
         <View style={styles.header}>
           <View>
             <Text style={styles.appName}>SunSuraksha</Text>
@@ -69,6 +81,7 @@ export default function HomeScreen() {
           </Text>
         </View>
 
+        {/* Heat Score Ring */}
         <HeatScoreRing
           score={heatScore.score}
           feelsLikeC={weather.feels_like_c}
@@ -78,6 +91,7 @@ export default function HomeScreen() {
 
         <View style={styles.spacer} />
 
+        {/* Weather Stats */}
         <WeatherMini
           humidity={weather.humidity_pct}
           uvIndex={weather.uv_index}
@@ -86,6 +100,7 @@ export default function HomeScreen() {
 
         <View style={styles.spacer} />
 
+        {/* Action Card */}
         <ActionCard
           action={heatScore.primaryAction}
           safeWindowStart={heatScore.safeWindowStart}
@@ -95,10 +110,12 @@ export default function HomeScreen() {
 
         <View style={styles.spacer} />
 
+        {/* Hourly Timeline */}
         <HourlyTimeline feelsLikeC={weather.feels_like_c} />
 
         <View style={styles.spacerLg} />
 
+        {/* Quick Actions */}
         <QuickActions />
 
         <View style={styles.spacerLg} />
