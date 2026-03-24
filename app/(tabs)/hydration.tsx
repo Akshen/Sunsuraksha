@@ -1,80 +1,135 @@
 /**
- * Hydration Tracker Screen
+ * Tips Screen
  *
- * Track daily water intake with:
- * 1. Progress ring showing consumed vs target
- * 2. Quick-add buttons (100ml, 250ml, 500ml, custom)
- * 3. Today's log history with undo
- * 4. Hydration tip based on temperature
- *
- * Uses local state for MVP. Will connect to Supabase later.
+ * Replaces the hydration tracker tab.
+ * Shows heat survival tips + a toggle to enable/disable
+ * automatic water reminder notifications.
  */
 
-import { useState, useMemo, useCallback } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+  Switch,
+  StyleSheet,
+  Alert,
+  Platform,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
 import { ScreenHeader } from '@/components/common';
-import { WaterProgressRing } from '@/components/hydration/WaterProgressRing';
-import { QuickAddButtons } from '@/components/hydration/QuickAddButtons';
-import { HydrationLogList } from '@/components/hydration/HydrationLogList';
-import { CustomAmountModal } from '@/components/hydration/CustomAmountModal';
-import { calculateWaterTarget, getHydrationInterval } from '@/utils/heatScore';
+import {
+  requestNotificationPermissions,
+  setupDailyHydrationReminders,
+  cancelAllNotifications,
+} from '@/services/notifications';
+import { useWeather } from '@/hooks/useWeather';
+import { useLocation } from '@/hooks/useLocation';
+import { getHydrationInterval } from '@/utils/heatScore';
 
-interface LocalLog {
-  id: string;
-  amount_ml: number;
-  logged_at: string;
-}
+const REMINDER_KEY = 'sunsuraksha_water_reminders_enabled';
 
-export default function HydrationScreen() {
-  const [logs, setLogs] = useState<LocalLog[]>([]);
-  const [showCustomModal, setShowCustomModal] = useState(false);
+// ---- Tips data ----
+const TIPS = [
+  {
+    emoji: '💧',
+    title: 'Drink before you feel thirsty',
+    body: 'By the time you feel thirsty, you\'re already mildly dehydrated. Sip water regularly throughout the day.',
+  },
+  {
+    emoji: '🥛',
+    title: 'Carry a water bottle everywhere',
+    body: 'Keep a 1L bottle with you. Refill it 3 times a day for a healthy 3L target in summer.',
+  },
+  {
+    emoji: '🧂',
+    title: 'Add a pinch of salt to your water',
+    body: 'Plain water isn\'t enough in extreme heat. Add black salt or drink nimbu pani to replenish electrolytes lost in sweat.',
+  },
+  {
+    emoji: '🍉',
+    title: 'Eat your water',
+    body: 'Watermelon (92% water), cucumber (96%), and muskmelon (90%) hydrate better than plain water because they come with electrolytes.',
+  },
+  {
+    emoji: '☕',
+    title: 'Replace chai with chaas',
+    body: 'Tea and coffee are diuretics — they make you lose more water. Switch your afternoon chai to buttermilk for cooling + hydration.',
+  },
+  {
+    emoji: '🍺',
+    title: 'Avoid alcohol in heat',
+    body: 'Alcohol suppresses the hormone that helps your body retain water. One beer can cause a net loss of 350ml fluid.',
+  },
+  {
+    emoji: '🌡️',
+    title: 'Check your urine color',
+    body: 'Pale yellow = hydrated. Dark yellow = drink water immediately. Clear = you\'re overhydrating (rare but possible).',
+  },
+  {
+    emoji: '⏰',
+    title: 'Front-load your water',
+    body: 'Drink 500ml within the first hour of waking up. Your body is dehydrated after 7-8 hours of sleep.',
+  },
+  {
+    emoji: '🥥',
+    title: 'Coconut water > sports drinks',
+    body: 'Tender coconut water has the same electrolyte balance as human blood plasma. It\'s nature\'s ORS — and available on every street corner.',
+  },
+  {
+    emoji: '🧊',
+    title: 'Cool, not ice-cold',
+    body: 'Ayurveda and modern science agree: ice-cold water shocks your digestive system. Cool or room temperature water is absorbed faster.',
+  },
+];
 
-  // TODO: Get from user profile (Step 5 onboarding data) + weather API (Step 7)
-  const userWeightKg = 70;
-  const currentTempC = 42;
-  const isOutdoor = false;
-  const currentHeatScore = 68;
+export default function TipsScreen() {
+  const [remindersEnabled, setRemindersEnabled] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Calculate personalized target
-  const targetMl = useMemo(
-    () => calculateWaterTarget(userWeightKg, currentTempC, isOutdoor),
-    [userWeightKg, currentTempC, isOutdoor]
-  );
+  const location = useLocation();
+  const { weather, heatScore } = useWeather({ city: location.city, coords: location.coords });
 
-  // Total consumed today
-  const totalMl = useMemo(
-    () => logs.reduce((sum, log) => sum + log.amount_ml, 0),
-    [logs]
-  );
+  const feelsLikeC = weather?.feels_like_c ?? 40;
+  const score = heatScore?.score ?? 50;
+  const intervalMin = getHydrationInterval(score);
 
-  // Reminder interval
-  const reminderMin = useMemo(
-    () => getHydrationInterval(currentHeatScore),
-    [currentHeatScore]
-  );
-
-  // Add water log
-  const addWater = useCallback((amountMl: number) => {
-    const newLog: LocalLog = {
-      id: `log_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-      amount_ml: amountMl,
-      logged_at: new Date().toISOString(),
-    };
-    setLogs((prev) => [newLog, ...prev]);
+  // Load saved preference
+  useEffect(() => {
+    AsyncStorage.getItem(REMINDER_KEY).then((value) => {
+      setRemindersEnabled(value === 'true');
+      setLoading(false);
+    });
   }, []);
 
-  // Delete water log (undo)
-  const deleteLog = useCallback((logId: string) => {
-    setLogs((prev) => prev.filter((log) => log.id !== logId));
-  }, []);
+  // Toggle reminders
+  const toggleReminders = useCallback(async (enabled: boolean) => {
+    if (enabled) {
+      const granted = await requestNotificationPermissions();
+      if (!granted) {
+        Alert.alert(
+          'Notifications blocked',
+          'Please enable notifications in your phone settings to get water reminders.',
+        );
+        return;
+      }
+      await setupDailyHydrationReminders(intervalMin, feelsLikeC);
+    } else {
+      await cancelAllNotifications();
+    }
+
+    setRemindersEnabled(enabled);
+    await AsyncStorage.setItem(REMINDER_KEY, enabled.toString());
+  }, [intervalMin, feelsLikeC]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScreenHeader
-        title="Hydration"
-        subtitle={`Target: ${(targetMl / 1000).toFixed(1)}L for ${Math.round(currentTempC)}°C`}
+        title="Tips & Reminders"
+        subtitle="Stay hydrated, stay safe"
       />
 
       <ScrollView
@@ -82,87 +137,76 @@ export default function HydrationScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Progress ring */}
-        <WaterProgressRing totalMl={totalMl} targetMl={targetMl} />
+        {/* Water reminder card */}
+        <View style={styles.reminderCard}>
+          <View style={styles.reminderTop}>
+            <View style={styles.reminderInfo}>
+              <Text style={styles.reminderTitle}>💧 Water reminders</Text>
+              <Text style={styles.reminderDesc}>
+                {remindersEnabled
+                  ? `Reminding you every ${intervalMin} min (based on heat score: ${score})`
+                  : 'Get notified to drink water throughout the day'}
+              </Text>
+            </View>
+            {!loading && (
+              <Switch
+                value={remindersEnabled}
+                onValueChange={toggleReminders}
+                trackColor={{ false: Colors.borderLight, true: '#85B7EB' }}
+                thumbColor={remindersEnabled ? '#3B8BD4' : Colors.textLight}
+              />
+            )}
+          </View>
 
-        <View style={styles.spacer} />
-
-        {/* Hydration tip */}
-        <View style={styles.tip}>
-          <Text style={styles.tipEmoji}>⏱️</Text>
-          <Text style={styles.tipText}>
-            Drink every {reminderMin} min in this heat. Next glass:{' '}
-            <Text style={styles.tipBold}>
-              {logs.length > 0
-                ? formatNextReminder(logs[0].logged_at, reminderMin)
-                : 'Now!'}
-            </Text>
-          </Text>
+          {remindersEnabled && (
+            <View style={styles.reminderDetail}>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Frequency</Text>
+                <Text style={styles.detailValue}>Every {intervalMin} min</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Adapts to</Text>
+                <Text style={styles.detailValue}>Current heat score</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Active for</Text>
+                <Text style={styles.detailValue}>Next 12 hours</Text>
+              </View>
+            </View>
+          )}
         </View>
 
-        <View style={styles.spacer} />
-
-        {/* Quick add buttons */}
-        <QuickAddButtons
-          onAdd={addWater}
-          onCustom={() => setShowCustomModal(true)}
-        />
-
-        <View style={styles.spacerLg} />
-
-        {/* Today's log */}
-        <HydrationLogList logs={logs} onDelete={deleteLog} />
-
-        <View style={styles.spacerLg} />
-
-        {/* Daily recommendation */}
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Your daily target explained</Text>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Base (weight)</Text>
-            <Text style={styles.infoValue}>{userWeightKg} kg × 35ml = {userWeightKg * 35}ml</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Heat multiplier</Text>
-            <Text style={styles.infoValue}>
-              {currentTempC >= 42 ? '×1.8' : currentTempC >= 37 ? '×1.5' : '×1.2'} (for {Math.round(currentTempC)}°C)
+        {/* Daily target info */}
+        <View style={styles.targetCard}>
+          <Text style={styles.targetEmoji}>🎯</Text>
+          <View style={styles.targetInfo}>
+            <Text style={styles.targetTitle}>Your daily water target</Text>
+            <Text style={styles.targetValue}>
+              {feelsLikeC >= 42 ? '4–5 liters' : feelsLikeC >= 37 ? '3–4 liters' : '2.5–3 liters'}
             </Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Activity</Text>
-            <Text style={styles.infoValue}>{isOutdoor ? '×1.4 (outdoor)' : '×1.0 (indoor)'}</Text>
-          </View>
-          <View style={[styles.infoRow, styles.infoRowTotal]}>
-            <Text style={styles.infoTotalLabel}>Daily target</Text>
-            <Text style={styles.infoTotalValue}>{(targetMl / 1000).toFixed(1)}L</Text>
+            <Text style={styles.targetHint}>
+              Based on {Math.round(feelsLikeC)}°C feels-like temperature
+            </Text>
           </View>
         </View>
 
-        <View style={styles.spacerLg} />
+        {/* Tips section */}
+        <Text style={styles.sectionTitle}>Heat survival tips</Text>
+
+        {TIPS.map((tip, index) => (
+          <View key={index} style={styles.tipCard}>
+            <Text style={styles.tipEmoji}>{tip.emoji}</Text>
+            <View style={styles.tipContent}>
+              <Text style={styles.tipTitle}>{tip.title}</Text>
+              <Text style={styles.tipBody}>{tip.body}</Text>
+            </View>
+          </View>
+        ))}
+
+        <View style={{ height: Spacing.xxl }} />
       </ScrollView>
-
-      {/* Custom amount modal */}
-      <CustomAmountModal
-        visible={showCustomModal}
-        onClose={() => setShowCustomModal(false)}
-        onAdd={addWater}
-      />
     </SafeAreaView>
   );
-}
-
-/** Calculate when the next glass is due */
-function formatNextReminder(lastLogIso: string, intervalMin: number): string {
-  const lastLog = new Date(lastLogIso);
-  const next = new Date(lastLog.getTime() + intervalMin * 60 * 1000);
-  const now = new Date();
-
-  if (next <= now) return 'Now!';
-
-  const diffMin = Math.round((next.getTime() - now.getTime()) / 60000);
-  if (diffMin < 1) return 'Now!';
-  if (diffMin === 1) return 'in 1 min';
-  return `in ${diffMin} min`;
 }
 
 const styles = StyleSheet.create({
@@ -170,85 +214,130 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  scroll: {
-    flex: 1,
-  },
+  scroll: { flex: 1 },
   scrollContent: {
+    paddingHorizontal: Spacing.xl,
     paddingBottom: Spacing.xxl,
   },
-  spacer: {
-    height: Spacing.lg,
-  },
-  spacerLg: {
-    height: Spacing.xxl,
-  },
 
-  // Tip
-  tip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    backgroundColor: '#E6F1FB',
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    marginHorizontal: Spacing.xl,
-  },
-  tipEmoji: {
-    fontSize: 16,
-  },
-  tipText: {
-    fontSize: Typography.size.sm,
-    color: '#185FA5',
-    flex: 1,
-    lineHeight: 19,
-  },
-  tipBold: {
-    fontWeight: Typography.weight.bold,
-  },
-
-  // Info card
-  infoCard: {
+  // Reminder card
+  reminderCard: {
     backgroundColor: Colors.card,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
-    marginHorizontal: Spacing.xl,
     borderWidth: 1,
     borderColor: Colors.borderLight,
+    marginBottom: Spacing.lg,
+    ...Shadows.sm,
   },
-  infoTitle: {
+  reminderTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  reminderInfo: {
+    flex: 1,
+  },
+  reminderTitle: {
+    fontSize: Typography.size.body,
+    fontWeight: Typography.weight.semibold,
+    color: Colors.text,
+  },
+  reminderDesc: {
     fontSize: Typography.size.sm,
+    color: Colors.textSecondary,
+    marginTop: 4,
+    lineHeight: 18,
+  },
+  reminderDetail: {
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+  },
+  detailLabel: {
+    fontSize: Typography.size.sm,
+    color: Colors.textSecondary,
+  },
+  detailValue: {
+    fontSize: Typography.size.sm,
+    fontWeight: Typography.weight.medium,
+    color: Colors.text,
+  },
+
+  // Target card
+  targetCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    backgroundColor: '#E6F1FB',
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.xxl,
+  },
+  targetEmoji: {
+    fontSize: 32,
+  },
+  targetInfo: {
+    flex: 1,
+  },
+  targetTitle: {
+    fontSize: Typography.size.sm,
+    color: '#185FA5',
+    fontWeight: Typography.weight.medium,
+  },
+  targetValue: {
+    fontSize: Typography.size.lg,
+    fontWeight: Typography.weight.bold,
+    color: '#0C447C',
+    marginTop: 2,
+  },
+  targetHint: {
+    fontSize: Typography.size.xs,
+    color: '#185FA5',
+    marginTop: 2,
+  },
+
+  // Section
+  sectionTitle: {
+    fontSize: Typography.size.body,
     fontWeight: Typography.weight.semibold,
     color: Colors.text,
     marginBottom: Spacing.md,
   },
-  infoRow: {
+
+  // Tip cards
+  tipCard: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: Spacing.xs + 2,
+    gap: Spacing.md,
+    backgroundColor: Colors.card,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
-  infoLabel: {
+  tipEmoji: {
+    fontSize: 22,
+    marginTop: 2,
+  },
+  tipContent: {
+    flex: 1,
+  },
+  tipTitle: {
     fontSize: Typography.size.sm,
-    color: Colors.textSecondary,
-  },
-  infoValue: {
-    fontSize: Typography.size.sm,
-    color: Colors.text,
-    fontWeight: Typography.weight.medium,
-  },
-  infoRowTotal: {
-    borderTopWidth: 1,
-    borderTopColor: Colors.borderLight,
-    marginTop: Spacing.sm,
-    paddingTop: Spacing.sm,
-  },
-  infoTotalLabel: {
-    fontSize: Typography.size.body,
     fontWeight: Typography.weight.semibold,
     color: Colors.text,
+    marginBottom: 4,
   },
-  infoTotalValue: {
-    fontSize: Typography.size.body,
-    fontWeight: Typography.weight.bold,
-    color: '#3B8BD4',
+  tipBody: {
+    fontSize: Typography.size.sm,
+    color: Colors.textSecondary,
+    lineHeight: 19,
   },
 });

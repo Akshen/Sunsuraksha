@@ -45,8 +45,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="hydration"
         options={{
-          title: 'Water',
-          tabBarIcon: ({ focused }) => <TabEmoji emoji="💧" focused={focused} />,
+          title: 'Tips',
+          tabBarIcon: ({ focused }) => <TabEmoji emoji="💡" focused={focused} />,
         }}
       />
       <Tabs.Screen

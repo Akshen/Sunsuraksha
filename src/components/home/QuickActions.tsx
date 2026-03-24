@@ -19,8 +19,8 @@ export function QuickActions() {
 
   const actions: QuickAction[] = [
     {
-      emoji: '💧',
-      label: 'Log water',
+      emoji: '💡',
+      label: 'Tips',
       onPress: () => router.push('/(tabs)/hydration'),
     },
     {
