@@ -94,6 +94,24 @@ Then:
 - **iOS Simulator:** Press `i`
 - **Android Emulator:** Press `a`
 
+### 6. Build APK / IPA (for beta testing)
+
+```bash
+# Install EAS CLI globally
+npm install -g eas-cli
+
+# Login to Expo
+eas login
+
+# Build Android APK (shareable, no Play Store needed)
+eas build --platform android --profile preview
+
+# Build iOS (requires Apple Developer account)
+eas build --platform ios --profile preview
+```
+
+The APK will be downloadable from your Expo dashboard once built. Share it directly with beta testers.
+
 ## Project Structure
 
 ```
@@ -213,9 +231,9 @@ If future tests need Supabase access:
 - [x] Step 9: Hydration tracker (progress ring, quick-add, log history, custom modal)
 - [x] Step 10: Daily planner (time blocks, safety levels, meal suggestions)
 - [x] Step 11: SOS emergency screen (symptom checker, first aid, emergency helplines)
-- [ ] Step 12: Push notifications
-- [ ] Step 13: Testing + bug fixes
-- [ ] Step 14: Build + deploy beta
+- [x] Step 12: Push notifications (hydration reminders + heat alerts via expo-notifications)
+- [x] Step 13: Testing (daily plan tests, weather service tests, 40+ total tests)
+- [x] Step 14: EAS Build config (development, preview APK, production profiles)
 
 ## Emergency Helpline Numbers
 
