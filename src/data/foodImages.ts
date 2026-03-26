@@ -10,13 +10,16 @@
 import { ImageSourcePropType } from 'react-native';
 
 export const LOCAL_FOOD_IMAGES: Record<string, ImageSourcePropType> = {
+  food_005: require('../../assets/images/food/food_005.png'),
   food_007: require('../../assets/images/food/food_007.png'),
   food_008: require('../../assets/images/food/food_008.png'),
   food_009: require('../../assets/images/food/food_009.png'),
   drink_002: require('../../assets/images/food/drink_002.png'),
+  drink_003: require('../../assets/images/food/drink_003.png'),
   drink_004: require('../../assets/images/food/drink_004.png'),
   drink_005: require('../../assets/images/food/drink_005.png'),
   drink_006: require('../../assets/images/food/drink_006.png'),
+  avoid_003: require('../../assets/images/food/avoid_003.png'),
   avoid_005: require('../../assets/images/food/avoid_005.png'),
 };
 

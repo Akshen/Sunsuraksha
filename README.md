@@ -119,48 +119,62 @@ SunSuraksha/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml              # GitHub Actions CI/CD pipeline
-├── __tests__/                  # All test files
-│   ├── components/             # Component tests
-│   ├── data/                   # Database query tests
-│   └── utils/                  # Utility function tests
+├── __tests__/                  # 12 test files, 138+ tests
+│   ├── components/             # Badge, Button, Card tests
+│   ├── data/                   # Food database + edge case tests
+│   ├── services/               # Weather, notifications tests
+│   └── utils/                  # Heat score, daily plan, theme tests
 ├── app/                        # Screens (Expo Router file-based routing)
 │   ├── (tabs)/                 # Bottom tab screens
-│   │   ├── _layout.tsx         # Tab bar config
-│   │   ├── index.tsx           # Home / Dashboard
+│   │   ├── _layout.tsx         # Tab bar config (Home, Food, Tips, Plan)
+│   │   ├── index.tsx           # Home / Dashboard (GPS + weather)
 │   │   ├── food.tsx            # Food & drink recommendations
-│   │   ├── hydration.tsx       # Hydration tracker
+│   │   ├── hydration.tsx       # Tips & water reminders
 │   │   └── planner.tsx         # Daily planner
 │   ├── onboarding/
-│   │   └── index.tsx           # First-launch onboarding
-│   ├── _layout.tsx             # Root layout
+│   │   └── index.tsx           # 3-step onboarding (all optional)
+│   ├── _layout.tsx             # Root layout (Stack navigator)
 │   └── sos.tsx                 # Emergency SOS screen
 ├── src/
 │   ├── components/
-│   │   └── common/             # Card, Button, Badge, ScreenHeader
+│   │   ├── common/             # Card, Button, Badge, ScreenHeader
+│   │   ├── home/               # HeatScoreRing, ActionCard, HourlyTimeline, WeatherMini, QuickActions
+│   │   ├── food/               # FoodCard, DrinkCard, AvoidCard (with local image support)
+│   │   └── planner/            # TimeBlockCard
 │   ├── constants/
-│   │   ├── theme.ts            # Colors, spacing, typography tokens
-│   │   └── config.ts           # App config (reads from env vars)
+│   │   ├── theme.ts            # Colors, spacing, typography, heat color mapping
+│   │   └── config.ts           # App config (reads from env vars, defaults to Mumbai)
 │   ├── data/
-│   │   ├── foodDrinks.json     # Bundled food/drink database (76KB)
-│   │   └── foodData.ts         # Typed query functions for the DB
+│   │   ├── foodDrinks.json     # Bundled food/drink database (76KB, 21 items)
+│   │   ├── foodData.ts         # Typed query functions for the DB
+│   │   └── foodImages.ts       # Local image map (8 bundled images)
+│   ├── hooks/
+│   │   ├── useLocation.ts      # GPS location detection + reverse geocoding
+│   │   └── useWeather.ts       # Weather fetch with auto-refresh (15 min)
 │   ├── services/
 │   │   ├── supabase.ts         # Supabase client init
 │   │   ├── auth.ts             # Sign up, sign in, sign out
 │   │   ├── profile.ts          # User profile CRUD
-│   │   ├── hydration.ts        # Water intake logging
+│   │   ├── hydration.ts        # Water intake logging (ready for future use)
+│   │   ├── weather.ts          # OpenWeatherMap API (30+ Indian cities)
+│   │   ├── notifications.ts    # Push notifications (safe in Expo Go)
 │   │   └── index.ts            # Barrel export
 │   ├── types/
 │   │   └── index.ts            # All TypeScript type definitions
 │   └── utils/
-│       └── heatScore.ts        # Heat danger score algorithm (0-100)
+│       ├── heatScore.ts        # Heat danger score algorithm (0-100)
+│       └── dailyPlan.ts        # Daily time block generator (4 temperature tiers)
+├── assets/
+│   └── images/
+│       └── food/               # 8 hand-picked local food images (400×400 PNG)
 ├── supabase/
-│   └── schema.sql              # Database schema (run in SQL Editor)
-├── assets/                     # Images, fonts, icons
+│   └── schema.sql              # Database schema v2 (gender, body_type)
 ├── .env.example                # Environment variable template
 ├── .npmrc                      # npm config (legacy-peer-deps)
+├── eas.json                    # EAS Build config (dev, preview APK, production)
 ├── app.json                    # Expo config
 ├── jest.config.js              # Test configuration
-├── tsconfig.json               # TypeScript config with path aliases
+├── tsconfig.json               # TypeScript config with @/ path aliases
 └── package.json
 ```
 
@@ -180,11 +194,20 @@ npx jest --watch
 npx jest __tests__/utils/heatScore.test.ts
 ```
 
-Current test suites:
-- **Heat score algorithm** — validates danger score calculation, thresholds, hydration intervals
-- **Card component** — renders children, variants, testIDs
-- **Button component** — press events, disabled state, loading state, all variants
+Current test suites (12 files, 138+ tests):
+- **Heat score algorithm** — core calculation, thresholds, hydration intervals
+- **Heat score scenarios** — Delhi 48°C, Mumbai monsoon, Bangalore, Ahmedabad 50°C, Shimla, Chennai humid
+- **Daily plan generator** — all 4 temperature tiers, block structure, 24-hour coverage
+- **Daily plan scenarios** — Nagpur extreme, Mumbai hot, Bangalore mild, activity validation
+- **Theme utilities** — heat color/label mapping at every boundary (30/55/75/100)
 - **Food database** — data integrity, query functions, smart recommendations
+- **Food data edge cases** — image URLs, Hindi names, nutrition values, dietary filters, temperature boundaries, investor demo scenarios
+- **Food local images** — local image map integrity, fallback to remote URLs
+- **Weather service** — mock fallback, data shape, value ranges
+- **Notification service** — graceful behavior in all environments (Expo Go safe)
+- **Card component** — renders children, variants, testIDs
+- **Button component** — press events, disabled state, loading state
+- **Badge component** — all 6 variants, sizes
 
 ## CI/CD Pipeline
 
@@ -212,11 +235,19 @@ If future tests need Supabase access:
 
 **Warm color palette** — Light cream background (`#FFF9F3`) with terracotta accents (`#D4763C`). Designed to be easy on the eyes under bright sunlight, which is when users need this app most.
 
-**Bundled food database** — The food/drink recommendation data ships locally with the app (76KB JSON). No network call needed. Every item includes IFCT 2017 / USDA nutrition data, Ayurvedic classification, preparation steps, and scientific citations.
+**GPS-first location** — The app detects your city via GPS on launch (using `expo-location`), then fetches hyper-local weather. Falls back to Mumbai if permission is denied. No manual city selection needed.
 
-**Heat score algorithm** — Converts raw weather data into a single 0-100 danger score using: feels-like temperature (50%), humidity (20%), UV index (20%), and time-of-day penalty (10%). This score drives every UI decision, notification, and recommendation.
+**Bundled food database** — The food/drink recommendation data ships locally with the app (76KB JSON + 8 local images). No network call needed. Every item includes IFCT 2017 / USDA nutrition data, Ayurvedic classification, preparation steps, and scientific citations. 8 hand-picked images for Indian items (chaas, aam panna, sabja, saunf, dahi chawal, sattu, ORS, stale food) are bundled as local assets.
+
+**Smart hourly timeline** — Models temperature variation through the day using a sinusoidal curve (peak at 2 PM, trough at 5 AM). Factors in humidity to compute per-hour heat index. Variable-height bars create a visual "heat mountain".
+
+**Heat score algorithm** — Converts raw weather data into a single 0-100 danger score using: feels-like temperature (50%), humidity (20%), UV index (20%), and time-of-day penalty (10%). This score drives every UI decision, notification interval, and recommendation.
+
+**Expo Go safe notifications** — Uses `Constants.appOwnership` to detect Expo Go and skip `expo-notifications` entirely (removed from Expo Go since SDK 53). All notification functions are safe no-ops in development, fully functional in production builds.
 
 **Path aliases** — All imports use `@/` prefix (e.g., `@/constants/theme`) instead of relative paths. Configured in `tsconfig.json` and `jest.config.js`.
+
+**Default city: Mumbai** — All fallbacks default to Mumbai (weather service, location hook, config).
 
 ## Build Progress
 
@@ -228,12 +259,24 @@ If future tests need Supabase access:
 - [x] Step 6: Home dashboard + heat score ring + action card + hourly timeline
 - [x] Step 7: Weather API integration (OpenWeatherMap + 30 Indian city coords + useWeather hook)
 - [x] Step 8: Food & drink recommendation screen (Eat / Drink / Avoid tabs)
-- [x] Step 9: Hydration tracker (progress ring, quick-add, log history, custom modal)
+- [x] Step 9: Tips & water reminders (push notifications every 20-60min based on heat)
 - [x] Step 10: Daily planner (time blocks, safety levels, meal suggestions)
 - [x] Step 11: SOS emergency screen (symptom checker, first aid, emergency helplines)
-- [x] Step 12: Push notifications (hydration reminders + heat alerts via expo-notifications)
-- [x] Step 13: Testing (daily plan tests, weather service tests, 40+ total tests)
-- [x] Step 14: EAS Build config (development, preview APK, production profiles)
+- [x] Step 12: Push notifications (Expo Go safe, production-ready)
+- [x] Step 13: Testing (12 files, 138+ tests, all passing)
+- [x] Step 14: EAS Build config + GPS location + local food images
+
+## Post-MVP Polish
+
+- [x] GPS-based location detection (auto-detects city, no manual entry)
+- [x] Default city changed to Mumbai
+- [x] Smart hourly timeline v2 (sinusoidal temp curve, humidity factoring, variable bar heights)
+- [x] 8 hand-picked local food images (bundled as assets, instant load)
+- [x] Emoji fallback for any failed remote images
+- [x] Hydration tracker replaced with Tips screen + push notification toggle
+- [x] Tab bar alignment fixed (4 tabs: Home, Food, Tips, Plan)
+- [x] Expo Go notification crash fixed (lazy-load with appOwnership check)
+- [x] All API keys moved to environment variables (no secrets in codebase)
 
 ## Emergency Helpline Numbers
 
