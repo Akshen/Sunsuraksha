@@ -111,7 +111,7 @@ export default function HomeScreen() {
         <View style={styles.spacer} />
 
         {/* Hourly Timeline */}
-        <HourlyTimeline feelsLikeC={weather.feels_like_c} />
+        <HourlyTimeline feelsLikeC={weather.feels_like_c} humidity={weather.humidity_pct} />
 
         <View style={styles.spacerLg} />
 

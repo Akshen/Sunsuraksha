@@ -1,51 +1,80 @@
 /**
- * HourlyTimeline — Hour-by-hour safety strip
+ * HourlyTimeline — Hour-by-hour safety strip (v2)
  *
- * Scrollable horizontal timeline showing color-coded blocks
- * for each hour (green = safe, amber = caution, red = danger).
+ * Models how temperature changes through a 24-hour cycle:
+ * - Peak heat: 1 PM – 4 PM (highest)
+ * - Coolest: 4 AM – 6 AM (lowest, ~60-70% of peak)
+ * - Morning rise: 6 AM – 1 PM
+ * - Evening drop: 4 PM – 10 PM
+ *
+ * Factors in humidity to compute a "heat index" per hour,
+ * then maps to safety levels.
  */
 
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 
-interface HourBlock {
-  hour: number;
-  safety: 'safe' | 'caution' | 'danger' | 'extreme';
-}
-
 interface HourlyTimelineProps {
   feelsLikeC: number;
+  humidity: number;
+}
+
+type Safety = 'safe' | 'caution' | 'danger' | 'extreme';
+
+interface HourData {
+  hour: number;
+  estTempC: number;
+  heatIndex: number;
+  safety: Safety;
 }
 
 const safetyColors = {
-  safe: { bg: Colors.safeBg, dot: Colors.safe },
-  caution: { bg: Colors.moderateBg, dot: Colors.moderate },
-  danger: { bg: Colors.dangerBg, dot: Colors.danger },
-  extreme: { bg: Colors.extremeBg, dot: Colors.extreme },
+  safe: { bg: Colors.safeBg, bar: Colors.safe },
+  caution: { bg: Colors.moderateBg, bar: Colors.moderate },
+  danger: { bg: Colors.dangerBg, bar: Colors.danger },
+  extreme: { bg: Colors.extremeBg, bar: Colors.extreme },
 };
 
-function getHourSafety(hour: number, feelsLikeC: number): HourBlock['safety'] {
-  // Night hours are always safe
-  if (hour >= 20 || hour <= 4) return 'safe';
+/**
+ * Estimate temperature at a given hour based on current feels-like.
+ * Uses a sinusoidal model: peak at 14:00, trough at 05:00.
+ * The curve assumes daytime high = feelsLikeC, nighttime low = feelsLikeC × 0.65
+ */
+function estimateTempAtHour(hour: number, currentFeelsLike: number): number {
+  // Peak hour = 14 (2 PM), trough hour = 5 (5 AM)
+  // Map hour to a 0-2π cycle where 14 = peak, 5 = trough
+  const peakHour = 14;
+  const offset = ((hour - peakHour) / 24) * 2 * Math.PI;
 
-  // Early morning and late evening
-  if (hour <= 6 || hour >= 18) return 'safe';
+  // Cosine gives 1 at peak, -1 at trough
+  const factor = Math.cos(offset);
 
-  // Base safety on feels-like temperature + time
-  if (feelsLikeC >= 45) {
-    if (hour >= 10 && hour <= 16) return 'extreme';
-    if (hour >= 8 && hour <= 17) return 'danger';
-    return 'caution';
-  }
-  if (feelsLikeC >= 40) {
-    if (hour >= 11 && hour <= 15) return 'danger';
-    if (hour >= 9 && hour <= 17) return 'caution';
-    return 'safe';
-  }
-  if (feelsLikeC >= 35) {
-    if (hour >= 12 && hour <= 14) return 'caution';
-    return 'safe';
-  }
+  // Range: night low is ~65% of peak, day high is 100%
+  const nightRatio = 0.65;
+  const midpoint = currentFeelsLike * ((1 + nightRatio) / 2);
+  const amplitude = currentFeelsLike * ((1 - nightRatio) / 2);
+
+  return midpoint + amplitude * factor;
+}
+
+/**
+ * Simplified heat index: accounts for humidity making heat worse.
+ * Above 40% humidity and 30°C, each 10% humidity adds ~1-2°C perceived heat.
+ */
+function computeHeatIndex(tempC: number, humidity: number): number {
+  if (tempC < 27 || humidity < 40) return tempC;
+
+  const humidityPenalty = ((humidity - 40) / 10) * 1.5;
+  return tempC + humidityPenalty;
+}
+
+/**
+ * Map heat index to safety level
+ */
+function getSafety(heatIndex: number): Safety {
+  if (heatIndex >= 47) return 'extreme';
+  if (heatIndex >= 40) return 'danger';
+  if (heatIndex >= 33) return 'caution';
   return 'safe';
 }
 
@@ -56,59 +85,89 @@ function formatHour(hour: number): string {
   return `${hour - 12}p`;
 }
 
-export function HourlyTimeline({ feelsLikeC }: HourlyTimelineProps) {
+export function HourlyTimeline({ feelsLikeC, humidity }: HourlyTimelineProps) {
   const currentHour = new Date().getHours();
 
-  // Generate 24 hours starting from current hour
-  const hours: HourBlock[] = Array.from({ length: 24 }, (_, i) => {
+  // Generate 24 hours of data
+  const hours: HourData[] = Array.from({ length: 24 }, (_, i) => {
     const hour = (currentHour + i) % 24;
-    return {
-      hour,
-      safety: getHourSafety(hour, feelsLikeC),
-    };
+    const estTempC = estimateTempAtHour(hour, feelsLikeC);
+    const heatIndex = computeHeatIndex(estTempC, humidity);
+    const safety = getSafety(heatIndex);
+
+    return { hour, estTempC, heatIndex, safety };
   });
+
+  // For bar height scaling
+  const maxHI = Math.max(...hours.map((h) => h.heatIndex));
+  const minHI = Math.min(...hours.map((h) => h.heatIndex));
+  const range = Math.max(maxHI - minHI, 1);
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Next 24 hours</Text>
         <View style={styles.legend}>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: Colors.safe }]} />
-            <Text style={styles.legendText}>Safe</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: Colors.moderate }]} />
-            <Text style={styles.legendText}>Caution</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: Colors.danger }]} />
-            <Text style={styles.legendText}>Danger</Text>
-          </View>
+          <LegendDot color={Colors.safe} label="Safe" />
+          <LegendDot color={Colors.moderate} label="Caution" />
+          <LegendDot color={Colors.danger} label="Danger" />
+          <LegendDot color={Colors.extreme} label="Extreme" />
         </View>
       </View>
 
+      {/* Scrollable timeline */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {hours.map((block, index) => {
-          const colors = safetyColors[block.safety];
+        {hours.map((data, index) => {
+          const colors = safetyColors[data.safety];
           const isNow = index === 0;
 
+          // Bar height: 20px min, 56px max — proportional to heat index
+          const barHeight = 20 + ((data.heatIndex - minHI) / range) * 36;
+
           return (
-            <View key={`${block.hour}-${index}`} style={styles.hourBlock}>
-              <View style={[styles.bar, { backgroundColor: colors.bg }]}>
-                <View style={[styles.barDot, { backgroundColor: colors.dot }]} />
+            <View key={`${data.hour}-${index}`} style={styles.hourBlock}>
+              {/* Estimated temp (shown on every 3rd block + Now) */}
+              <Text style={styles.tempLabel}>
+                {(isNow || index % 3 === 0) ? `${Math.round(data.estTempC)}°` : ''}
+              </Text>
+
+              {/* Variable-height bar */}
+              <View style={styles.barContainer}>
+                <View
+                  style={[
+                    styles.bar,
+                    {
+                      height: barHeight,
+                      backgroundColor: colors.bar,
+                      opacity: isNow ? 1 : 0.7,
+                    },
+                    isNow && styles.barNow,
+                  ]}
+                />
               </View>
+
+              {/* Hour label */}
               <Text style={[styles.hourLabel, isNow && styles.hourLabelNow]}>
-                {isNow ? 'Now' : formatHour(block.hour)}
+                {isNow ? 'Now' : formatHour(data.hour)}
               </Text>
             </View>
           );
         })}
       </ScrollView>
+    </View>
+  );
+}
+
+function LegendDot({ color, label }: { color: string; label: string }) {
+  return (
+    <View style={styles.legendItem}>
+      <View style={[styles.legendDot, { backgroundColor: color }]} />
+      <Text style={styles.legendText}>{label}</Text>
     </View>
   );
 }
@@ -130,41 +189,52 @@ const styles = StyleSheet.create({
   },
   legend: {
     flexDirection: 'row',
-    gap: Spacing.md,
+    gap: Spacing.sm,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 3,
   },
   legendDot: {
-    width: 8,
-    height: 8,
+    width: 7,
+    height: 7,
     borderRadius: 4,
   },
   legendText: {
-    fontSize: Typography.size.xs,
+    fontSize: 10,
     color: Colors.textSecondary,
   },
   scrollContent: {
-    gap: 6,
+    gap: 4,
     paddingRight: Spacing.xl,
+    alignItems: 'flex-end',
   },
   hourBlock: {
     alignItems: 'center',
-    width: 38,
+    width: 36,
   },
-  bar: {
-    width: 32,
-    height: 48,
-    borderRadius: BorderRadius.sm,
-    justifyContent: 'center',
+  tempLabel: {
+    fontSize: 9,
+    color: Colors.textSecondary,
+    fontWeight: Typography.weight.medium,
+    height: 14,
+    textAlign: 'center',
+  },
+  barContainer: {
+    height: 56,
+    justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  barDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+  bar: {
+    width: 22,
+    borderRadius: BorderRadius.sm,
+    minHeight: 20,
+  },
+  barNow: {
+    width: 26,
+    borderWidth: 2,
+    borderColor: Colors.primary,
   },
   hourLabel: {
     fontSize: 10,

@@ -5,6 +5,8 @@ node_modules/
 .expo/
 dist/
 web-build/
+eas.json
+app.json
 
 # Native builds
 ios/
