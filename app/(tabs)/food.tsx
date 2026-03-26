@@ -113,6 +113,7 @@ export default function FoodScreen() {
           allFoods.map((food) => (
             <FoodCard
               key={food.id}
+              id={food.id}
               name={food.name}
               nameHi={food.name_hi}
               imageUrl={food.image_url}
@@ -131,6 +132,7 @@ export default function FoodScreen() {
           allDrinks.map((drink) => (
             <DrinkCard
               key={drink.id}
+              id={drink.id}
               name={drink.name}
               nameHi={drink.name_hi ?? ''}
               imageUrl={drink.image_url}
@@ -151,6 +153,7 @@ export default function FoodScreen() {
           allAvoids.map((item) => (
             <AvoidCard
               key={item.id}
+              id={item.id}
               name={item.name}
               nameHi={item.name_hi}
               imageUrl={item.image_url}

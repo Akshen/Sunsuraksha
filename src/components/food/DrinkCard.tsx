@@ -8,8 +8,10 @@
 import { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { getFoodImageSource } from '@/data/foodImages';
 
 interface DrinkCardProps {
+  id: string;
   name: string;
   nameHi: string;
   imageUrl: string;
@@ -23,6 +25,7 @@ interface DrinkCardProps {
 }
 
 export function DrinkCard({
+  id,
   name,
   nameHi,
   imageUrl,
@@ -51,7 +54,7 @@ export function DrinkCard({
           </View>
         ) : (
           <Image
-            source={{ uri: imageUrl }}
+            source={getFoodImageSource(id, imageUrl)}
             style={styles.image}
             onError={() => setImgError(true)}
           />

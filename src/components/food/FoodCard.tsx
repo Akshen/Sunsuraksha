@@ -8,8 +8,10 @@
 import { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
+import { getFoodImageSource } from '@/data/foodImages';
 
 interface FoodCardProps {
+  id: string;
   name: string;
   nameHi: string;
   imageUrl: string;
@@ -32,6 +34,7 @@ const EMOJI_MAP: Record<string, string> = {
 };
 
 export function FoodCard({
+  id,
   name,
   nameHi,
   imageUrl,
@@ -60,7 +63,7 @@ export function FoodCard({
           </View>
         ) : (
           <Image
-            source={{ uri: imageUrl }}
+            source={getFoodImageSource(id, imageUrl)}
             style={styles.image}
             onError={() => setImgError(true)}
           />
