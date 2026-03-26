@@ -1,8 +1,12 @@
 /**
- * Daily Plan Generator
+ * Daily Plan Generator v2
  *
- * Generates time blocks with safety levels, recommendations,
- * and suggested activities based on the current temperature.
+ * Improvements over v1:
+ * - Uses sinusoidal temperature curve (same model as HourlyTimeline)
+ * - Factors in humidity for heat index per time block
+ * - Dynamic recommendations that include actual temperature values
+ * - Drink suggestions per block from our database
+ * - Clothing tips per block
  */
 
 type Safety = 'safe' | 'caution' | 'danger' | 'extreme';
@@ -14,210 +18,179 @@ export interface PlanBlock {
   label: string;
   recommendation: string;
   activities: string[];
+  drinkTip?: string;
+  clothingTip?: string;
+  estTempRange?: string;
 }
+
+// ---- Temperature curve (mirrors HourlyTimeline) ----
+
+function estimateTempAtHour(hour: number, feelsLikeC: number): number {
+  const peakHour = 14;
+  const offset = ((hour - peakHour) / 24) * 2 * Math.PI;
+  const factor = Math.cos(offset);
+  const nightRatio = 0.65;
+  const midpoint = feelsLikeC * ((1 + nightRatio) / 2);
+  const amplitude = feelsLikeC * ((1 - nightRatio) / 2);
+  return midpoint + amplitude * factor;
+}
+
+function computeHeatIndex(tempC: number, humidity: number): number {
+  if (tempC < 27 || humidity < 40) return tempC;
+  return tempC + ((humidity - 40) / 10) * 1.5;
+}
+
+function getSafety(heatIndex: number): Safety {
+  if (heatIndex >= 47) return 'extreme';
+  if (heatIndex >= 40) return 'danger';
+  if (heatIndex >= 33) return 'caution';
+  return 'safe';
+}
+
+// ---- Block definitions ----
+
+interface TimeSlot {
+  startHour: number;
+  endHour: number;
+  label: string;
+}
+
+const TIME_SLOTS: TimeSlot[] = [
+  { startHour: 5, endHour: 7, label: 'Early morning' },
+  { startHour: 7, endHour: 9, label: 'Morning' },
+  { startHour: 9, endHour: 11, label: 'Late morning' },
+  { startHour: 11, endHour: 14, label: 'Midday' },
+  { startHour: 14, endHour: 17, label: 'Afternoon' },
+  { startHour: 17, endHour: 19, label: 'Evening' },
+  { startHour: 19, endHour: 22, label: 'Night' },
+  { startHour: 22, endHour: 5, label: 'Late night' },
+];
+
+// ---- Recommendations by safety ----
+
+function getRecommendation(safety: Safety, label: string, avgTemp: number): string {
+  const temp = Math.round(avgTemp);
+
+  switch (safety) {
+    case 'extreme':
+      return `EXTREME DANGER (~${temp}°C). Do NOT go outside. Heatstroke risk within 15 min. Hydrate every 20 min. Close curtains and use fans/AC.`;
+    case 'danger':
+      return `Dangerous heat (~${temp}°C). Stay indoors if possible. If you must go out, carry water, cover your head, and limit exposure to 15 min. Drink water every 30 min.`;
+    case 'caution':
+      return `Warm (~${temp}°C). Limit intense outdoor activity. Carry a water bottle. Wear light, loose cotton clothes. Take shade breaks.`;
+    case 'safe':
+      if (label.includes('night') || label.includes('Night')) {
+        return `Comfortable (~${temp}°C). Good for walks and outdoor activities. Open windows for cross-ventilation. Stay hydrated before bed.`;
+      }
+      return `Pleasant (~${temp}°C). Great time for outdoor activity — exercise, walk, errands. Carry water and wear sunscreen.`;
+  }
+}
+
+function getActivities(safety: Safety, label: string): string[] {
+  switch (safety) {
+    case 'extreme':
+      return ['Stay indoors', 'Rest', 'Hydrate constantly'];
+    case 'danger':
+      return ['Indoor work only', 'Light meals', 'Hydrate every 30 min'];
+    case 'caution':
+      if (label.includes('morning') || label.includes('Morning')) {
+        return ['Finish errands', 'Move indoors', 'Hydrate'];
+      }
+      if (label.includes('Evening') || label.includes('Afternoon')) {
+        return ['Short walk with water', 'Quick errands', 'Hydrate'];
+      }
+      return ['Light activity', 'Stay in shade', 'Hydrate'];
+    case 'safe':
+      if (label.includes('Early morning')) {
+        return ['Exercise', 'Walk', 'Yoga', 'Market run'];
+      }
+      if (label.includes('night') || label.includes('Night')) {
+        return ['Walk', 'Dinner', 'Socializing', 'Sleep prep'];
+      }
+      return ['All activities OK', 'Walk', 'Exercise', 'Errands'];
+  }
+}
+
+function getDrinkTip(safety: Safety, label: string): string {
+  switch (safety) {
+    case 'extreme':
+      return '💧 ORS or nimbu pani with black salt every 20 min';
+    case 'danger':
+      return '💧 Coconut water or buttermilk every 30 min';
+    case 'caution':
+      if (label.includes('morning') || label.includes('Morning')) {
+        return '💧 Start with 500ml water + sattu sharbat';
+      }
+      return '💧 Nimbu pani or plain water every 45 min';
+    case 'safe':
+      if (label.includes('Early morning')) {
+        return '💧 500ml water on waking + fruit juice';
+      }
+      if (label.includes('Night') || label.includes('night')) {
+        return '💧 Light buttermilk with dinner + water before bed';
+      }
+      return '💧 Regular water intake — aim for a glass per hour';
+  }
+}
+
+function getClothingTip(safety: Safety): string | undefined {
+  switch (safety) {
+    case 'extreme':
+    case 'danger':
+      return '👕 Loose white/light cotton. Wet cloth on neck. Cover head if stepping out.';
+    case 'caution':
+      return '👕 Light cotton clothes. Sunglasses + hat if outdoors.';
+    default:
+      return undefined;
+  }
+}
+
+// ---- Main generator ----
 
 /**
- * Generate a full day plan based on feels-like temperature
+ * Generate a full day plan based on current feels-like and humidity.
+ * Each block's safety is computed from the estimated temperature curve.
  */
-export function generateDailyPlan(feelsLikeC: number): PlanBlock[] {
-  if (feelsLikeC >= 45) return getExtremePlan();
-  if (feelsLikeC >= 40) return getHotPlan();
-  if (feelsLikeC >= 35) return getWarmPlan();
-  return getMildPlan();
-}
+export function generateDailyPlan(feelsLikeC: number, humidity: number = 50): PlanBlock[] {
+  return TIME_SLOTS.map((slot) => {
+    // Compute average heat index for this block
+    const hours = slot.endHour > slot.startHour
+      ? slot.endHour - slot.startHour
+      : (24 - slot.startHour) + slot.endHour;
 
-function getExtremePlan(): PlanBlock[] {
-  return [
-    {
-      startHour: 5,
-      endHour: 7,
-      safety: 'safe',
-      label: 'Early morning window',
-      recommendation: 'Only safe time for outdoor activity. Step out now if needed — carry water.',
-      activities: ['Walk', 'Exercise', 'Market run', 'Errands'],
-    },
-    {
-      startHour: 7,
-      endHour: 9,
-      safety: 'caution',
-      label: 'Morning — heat rising',
-      recommendation: 'Head back indoors. Temperature climbing fast. Finish outdoor tasks.',
-      activities: ['Quick errands only', 'Hydrate'],
-    },
-    {
-      startHour: 9,
-      endHour: 11,
-      safety: 'danger',
-      label: 'Mid-morning — dangerous',
-      recommendation: 'Stay indoors. UV index rising. Drink water every 30 minutes.',
-      activities: ['Indoor work', 'Hydrate', 'Light breakfast'],
-    },
-    {
-      startHour: 11,
-      endHour: 16,
-      safety: 'extreme',
-      label: 'Peak heat — EXTREME DANGER',
-      recommendation: 'Do NOT go outside. Feels like 48°C+. Risk of heatstroke within 15 minutes of exposure. Hydrate every 20 minutes.',
-      activities: ['Stay indoors', 'Rest', 'Hydrate constantly'],
-    },
-    {
-      startHour: 16,
-      endHour: 18,
-      safety: 'danger',
-      label: 'Late afternoon — still dangerous',
-      recommendation: 'Heat is subsiding but still dangerous. Continue staying indoors if possible.',
-      activities: ['Indoor work', 'Light snack', 'Hydrate'],
-    },
-    {
-      startHour: 18,
-      endHour: 20,
-      safety: 'caution',
-      label: 'Evening — cooling down',
-      recommendation: 'Can step out briefly. Carry water. Avoid heavy physical activity.',
-      activities: ['Short walk', 'Evening market', 'Light exercise'],
-    },
-    {
-      startHour: 20,
-      endHour: 23,
-      safety: 'safe',
-      label: 'Night — safe',
-      recommendation: 'Safe to be outside. Good time for walks, socializing, and errands.',
-      activities: ['Walk', 'Dinner out', 'Socializing'],
-    },
-    {
-      startHour: 23,
-      endHour: 5,
-      safety: 'safe',
-      label: 'Late night — sleep',
-      recommendation: 'Open windows for cross-ventilation. Use wet cotton sheet if no AC. Stay hydrated before bed.',
-      activities: ['Sleep', 'Rest', 'Night ventilation'],
-    },
-  ];
-}
+    let totalHI = 0;
+    let minTemp = Infinity;
+    let maxTemp = -Infinity;
 
-function getHotPlan(): PlanBlock[] {
-  return [
-    {
-      startHour: 5,
-      endHour: 8,
-      safety: 'safe',
-      label: 'Early morning',
-      recommendation: 'Best time for outdoor activity. Exercise, walk, or run errands now.',
-      activities: ['Exercise', 'Walk', 'Errands', 'Market'],
-    },
-    {
-      startHour: 8,
-      endHour: 10,
-      safety: 'caution',
-      label: 'Late morning — heating up',
-      recommendation: 'Wrap up outdoor tasks. Heat is building. Stay in shade if outside.',
-      activities: ['Finish errands', 'Hydrate', 'Move indoors'],
-    },
-    {
-      startHour: 10,
-      endHour: 16,
-      safety: 'danger',
-      label: 'Peak heat — avoid outdoors',
-      recommendation: 'Stay indoors. Feels like 42°C+. Drink water every 30 min. Eat light cooling foods.',
-      activities: ['Indoor work', 'Curd rice for lunch', 'Rest', 'Hydrate'],
-    },
-    {
-      startHour: 16,
-      endHour: 18,
-      safety: 'caution',
-      label: 'Late afternoon',
-      recommendation: 'Heat subsiding. Can step out briefly with water and sun protection.',
-      activities: ['Quick errands', 'Hydrate', 'Buttermilk'],
-    },
-    {
-      startHour: 18,
-      endHour: 21,
-      safety: 'safe',
-      label: 'Evening — safe window',
-      recommendation: 'Good time for outdoor activities, walks, and errands.',
-      activities: ['Walk', 'Exercise', 'Market', 'Socializing'],
-    },
-    {
-      startHour: 21,
-      endHour: 5,
-      safety: 'safe',
-      label: 'Night',
-      recommendation: 'Ventilate your room. Have a light dinner. Stay hydrated before sleep.',
-      activities: ['Dinner', 'Sleep', 'Ventilation'],
-    },
-  ];
-}
+    for (let i = 0; i < hours; i++) {
+      const h = (slot.startHour + i) % 24;
+      const temp = estimateTempAtHour(h, feelsLikeC);
+      const hi = computeHeatIndex(temp, humidity);
+      totalHI += hi;
+      minTemp = Math.min(minTemp, temp);
+      maxTemp = Math.max(maxTemp, temp);
+    }
 
-function getWarmPlan(): PlanBlock[] {
-  return [
-    {
-      startHour: 5,
-      endHour: 9,
-      safety: 'safe',
-      label: 'Morning',
-      recommendation: 'Great time for all outdoor activities. Carry water.',
-      activities: ['Exercise', 'Walk', 'Commute', 'Errands'],
-    },
-    {
-      startHour: 9,
-      endHour: 11,
-      safety: 'safe',
-      label: 'Late morning',
-      recommendation: 'Still comfortable. Good for commuting and outdoor work.',
-      activities: ['Work', 'Commute', 'Outdoor tasks'],
-    },
-    {
-      startHour: 11,
-      endHour: 15,
-      safety: 'caution',
-      label: 'Midday — warm',
-      recommendation: 'Getting warm. Limit intense outdoor activity. Stay hydrated.',
-      activities: ['Light indoor work', 'Lunch', 'Hydrate'],
-    },
-    {
-      startHour: 15,
-      endHour: 18,
-      safety: 'safe',
-      label: 'Afternoon',
-      recommendation: 'Heat subsiding. Fine for outdoor activity with water.',
-      activities: ['Errands', 'Walking', 'Sports'],
-    },
-    {
-      startHour: 18,
-      endHour: 5,
-      safety: 'safe',
-      label: 'Evening & night',
-      recommendation: 'Comfortable. Enjoy the evening.',
-      activities: ['Everything', 'Walk', 'Dinner', 'Exercise'],
-    },
-  ];
-}
+    const avgHI = totalHI / hours;
+    const avgTemp = (minTemp + maxTemp) / 2;
+    const safety = getSafety(avgHI);
 
-function getMildPlan(): PlanBlock[] {
-  return [
-    {
-      startHour: 5,
-      endHour: 11,
-      safety: 'safe',
-      label: 'Morning',
-      recommendation: 'Pleasant weather. All activities are fine. Stay hydrated as usual.',
-      activities: ['All activities'],
-    },
-    {
-      startHour: 11,
-      endHour: 16,
-      safety: 'safe',
-      label: 'Midday',
-      recommendation: 'Comfortable temperature. Carry water if outdoors for long periods.',
-      activities: ['All activities'],
-    },
-    {
-      startHour: 16,
-      endHour: 5,
-      safety: 'safe',
-      label: 'Evening & night',
-      recommendation: 'Great weather. Enjoy!',
-      activities: ['All activities'],
-    },
-  ];
+    return {
+      startHour: slot.startHour,
+      endHour: slot.endHour,
+      safety,
+      label: safety === 'extreme'
+        ? `${slot.label} — EXTREME DANGER`
+        : safety === 'danger'
+        ? `${slot.label} — stay indoors`
+        : safety === 'caution'
+        ? `${slot.label} — be careful`
+        : slot.label,
+      recommendation: getRecommendation(safety, slot.label, avgTemp),
+      activities: getActivities(safety, slot.label),
+      drinkTip: getDrinkTip(safety, slot.label),
+      clothingTip: getClothingTip(safety),
+      estTempRange: `${Math.round(minTemp)}–${Math.round(maxTemp)}°C`,
+    };
+  });
 }
