@@ -55,7 +55,7 @@ const INDIAN_CITIES: Record<string, { lat: number; lon: number }> = {
  */
 function getCityCoords(city: string): { lat: number; lon: number } {
   const normalized = city.toLowerCase().trim();
-  return INDIAN_CITIES[normalized] || INDIAN_CITIES['delhi'];
+  return INDIAN_CITIES[normalized] || INDIAN_CITIES['mumbai'];
 }
 
 /**
@@ -85,7 +85,7 @@ export async function fetchWeather(city: string): Promise<WeatherData> {
     const data = await response.json();
 
     return {
-      city: city || 'Delhi',
+      city: city || 'Mumbai',
       temp_c: Math.round(data.main.temp * 10) / 10,
       feels_like_c: Math.round(data.main.feels_like * 10) / 10,
       humidity_pct: data.main.humidity,
@@ -162,7 +162,7 @@ function getMockWeather(city: string): WeatherData {
   const isDaytime = hour >= 6 && hour <= 19;
 
   return {
-    city: city || 'Delhi',
+    city: city || 'Mumbai',
     temp_c: isDaytime ? 42 : 32,
     feels_like_c: isDaytime ? 46 : 34,
     humidity_pct: 35,

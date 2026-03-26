@@ -28,7 +28,7 @@ export const Config = {
 
   // App defaults
   defaults: {
-    city: 'Delhi',
+    city: 'Mumbai',
     language: 'en',
     tempUnit: 'celsius',
     waterGoalMl: 3000,

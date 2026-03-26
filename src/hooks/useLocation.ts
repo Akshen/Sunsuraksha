@@ -21,7 +21,7 @@ interface UseLocationResult {
 }
 
 export function useLocation(): UseLocationResult {
-  const [city, setCity] = useState<string>('Delhi');
+  const [city, setCity] = useState<string>('Mumbai');
   const [coords, setCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

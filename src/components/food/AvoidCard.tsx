@@ -33,6 +33,7 @@ export function AvoidCard({
   alternatives,
 }: AvoidCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const config = severityConfig[severity];
 
   return (
@@ -42,11 +43,17 @@ export function AvoidCard({
       activeOpacity={0.8}
     >
       <View style={styles.topRow}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          defaultSource={require('../../../assets/images/icon.png')}
-        />
+        {imgError ? (
+          <View style={[styles.image, styles.imageFallback]}>
+            <Text style={styles.fallbackEmoji}>🚫</Text>
+          </View>
+        ) : (
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.image}
+            onError={() => setImgError(true)}
+          />
+        )}
         <View style={styles.info}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.nameHi}>{nameHi}</Text>
@@ -97,6 +104,13 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: BorderRadius.sm,
     backgroundColor: Colors.cardAlt,
+  },
+  imageFallback: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fallbackEmoji: {
+    fontSize: 24,
   },
   info: {
     flex: 1,

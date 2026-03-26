@@ -35,6 +35,7 @@ export function DrinkCard({
   steps,
 }: DrinkCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <TouchableOpacity
@@ -44,11 +45,17 @@ export function DrinkCard({
     >
       {/* Top row */}
       <View style={styles.topRow}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          defaultSource={require('../../../assets/images/icon.png')}
-        />
+        {imgError ? (
+          <View style={[styles.image, styles.imageFallback]}>
+            <Text style={styles.fallbackEmoji}>🥤</Text>
+          </View>
+        ) : (
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.image}
+            onError={() => setImgError(true)}
+          />
+        )}
         <View style={styles.info}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.nameHi}>{nameHi}</Text>
@@ -125,6 +132,13 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.cardAlt,
+  },
+  imageFallback: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fallbackEmoji: {
+    fontSize: 32,
   },
   info: {
     flex: 1,
