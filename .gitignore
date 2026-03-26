@@ -6,7 +6,6 @@ node_modules/
 dist/
 web-build/
 eas.json
-app.json
 
 # Native builds
 ios/
