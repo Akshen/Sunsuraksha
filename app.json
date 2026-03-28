@@ -7,34 +7,49 @@
     "icon": "./assets/images/icon.png",
     "scheme": "sunsuraksha",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#FFF9F3"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sunsuraksha.app"
+      "bundleIdentifier": "com.sunsuraksha.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "SunSuraksha needs your location to show local weather and heat alerts for your city."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFF9F3"
       },
-      "package": "com.sunsuraksha.app"
+      "package": "com.sunsuraksha.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "SunSuraksha needs your location to show local weather and heat alerts."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/favicon.png",
+          "color": "#D4763C"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "86867493-a44e-4ecc-887b-e98cd2889a48"
-      }
     }
   }
 }
