@@ -1,21 +1,24 @@
 /**
- * useWeather — Custom hook for weather data
+ * useWeather v2 — Offline-capable weather hook
  *
- * Accepts either a city name OR GPS coordinates.
- * If coords are provided, uses them for more accurate weather.
- * Auto-refreshes every 15 minutes.
+ * Strategy:
+ * 1. Try live API fetch
+ * 2. On failure → load cached weather from AsyncStorage
+ * 3. On cache miss → return mock data
  *
- * Usage:
- *   const { weather, heatScore, loading, refresh } = useWeather({ city: 'Mumbai' });
- *   const { weather } = useWeather({ coords: { lat: 19.07, lon: 72.87 } });
+ * Cache is valid for 6 hours.
+ * Auto-refreshes every 15 minutes when online.
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchWeather, fetchWeatherByCoords } from '@/services/weather';
 import { calculateHeatScore } from '@/utils/heatScore';
 import type { WeatherData, HeatScore } from '@/types';
 
-const REFRESH_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+const REFRESH_INTERVAL_MS = 15 * 60 * 1000;
+const CACHE_KEY = 'sunsuraksha_weather_cache';
+const CACHE_MAX_AGE_MS = 6 * 60 * 60 * 1000; // 6 hours
 
 interface UseWeatherParams {
   city?: string;
@@ -27,16 +30,40 @@ interface UseWeatherResult {
   heatScore: HeatScore | null;
   loading: boolean;
   error: string | null;
+  isOffline: boolean;
   refresh: () => Promise<void>;
   lastUpdated: string | null;
 }
 
+async function cacheWeather(data: WeatherData): Promise<void> {
+  try {
+    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
+  } catch {}
+}
+
+async function loadCachedWeather(): Promise<WeatherData | null> {
+  try {
+    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const data: WeatherData = JSON.parse(raw);
+
+    // Check age
+    const age = Date.now() - new Date(data.updated_at).getTime();
+    if (age > CACHE_MAX_AGE_MS) return null;
+
+    return data;
+  } catch {
+    return null;
+  }
+}
+
 export function useWeather(params: UseWeatherParams): UseWeatherResult {
-  const { city = 'Delhi', coords } = params;
+  const { city = 'Mumbai', coords } = params;
 
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const heatScore = useMemo(() => {
@@ -58,17 +85,25 @@ export function useWeather(params: UseWeatherParams): UseWeatherResult {
       let data: WeatherData;
 
       if (coords) {
-        // Use GPS coordinates for accurate location-based weather
         data = await fetchWeatherByCoords(coords.lat, coords.lon);
       } else {
-        // Fall back to city name lookup
         data = await fetchWeather(city);
       }
 
       setWeather(data);
+      setIsOffline(false);
+      await cacheWeather(data);
     } catch (err) {
-      setError('Failed to load weather data');
-      console.error('useWeather error:', err);
+      // Network failed — try cache
+      const cached = await loadCachedWeather();
+      if (cached) {
+        setWeather(cached);
+        setIsOffline(true);
+        setError('Using cached data — no internet');
+      } else {
+        setError('No weather data available');
+        setIsOffline(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -81,13 +116,9 @@ export function useWeather(params: UseWeatherParams): UseWeatherResult {
 
   useEffect(() => {
     loadWeather();
-
     intervalRef.current = setInterval(loadWeather, REFRESH_INTERVAL_MS);
-
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [loadWeather]);
 
@@ -96,6 +127,7 @@ export function useWeather(params: UseWeatherParams): UseWeatherResult {
     heatScore,
     loading,
     error,
+    isOffline,
     refresh,
     lastUpdated,
   };
