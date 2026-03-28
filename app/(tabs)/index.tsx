@@ -1,19 +1,16 @@
 /**
- * Home Dashboard v3
+ * Home Dashboard — GPS + Offline Cache
  *
- * - Shows offline banner when using cached data
- * - Tappable city name opens city selector modal
- * - Location source indicator (GPS/Network/Cache/Manual)
+ * No manual city selector. Location via GPS/network only.
+ * Offline banner when using cached weather data.
  */
 
-import { useState } from 'react';
 import {
-  ScrollView, View, Text, StyleSheet, RefreshControl,
-  ActivityIndicator, TouchableOpacity, Modal, FlatList, TextInput,
+  ScrollView, View, Text, StyleSheet, RefreshControl, ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { useLocation, INDIAN_CITIES } from '@/hooks/useLocation';
+import { useLocation } from '@/hooks/useLocation';
 import { useWeather } from '@/hooks/useWeather';
 import { HeatScoreRing } from '@/components/home/HeatScoreRing';
 import { ActionCard } from '@/components/home/ActionCard';
@@ -27,19 +24,6 @@ export default function HomeScreen() {
     city: location.city,
     coords: location.coords,
   });
-  const [showCityModal, setShowCityModal] = useState(false);
-  const [citySearch, setCitySearch] = useState('');
-
-  const filteredCities = citySearch
-    ? INDIAN_CITIES.filter((c) => c.toLowerCase().includes(citySearch.toLowerCase()))
-    : INDIAN_CITIES;
-
-  function selectCity(cityName: string) {
-    location.setManualCity(cityName);
-    setShowCityModal(false);
-    setCitySearch('');
-    refresh();
-  }
 
   if ((loading || location.loading) && !weather) {
     return (
@@ -92,17 +76,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View>
             <Text style={styles.appName}>SunSuraksha</Text>
-            {/* Tappable city name */}
-            <TouchableOpacity
-              onPress={() => setShowCityModal(true)}
-              style={styles.cityRow}
-              activeOpacity={0.6}
-            >
-              <Text style={styles.cityText}>
-                {sourceEmoji} {weather.city}
-              </Text>
-              <Text style={styles.changeCity}>Change</Text>
-            </TouchableOpacity>
+            <Text style={styles.cityText}>{sourceEmoji} {weather.city}</Text>
           </View>
           <Text style={styles.updated}>
             {lastUpdated ? `Updated ${lastUpdated}` : ''}
@@ -152,60 +126,6 @@ export default function HomeScreen() {
 
         <View style={styles.spacerLg} />
       </ScrollView>
-
-      {/* City selector modal */}
-      <Modal visible={showCityModal} animationType="slide" transparent onRequestClose={() => setShowCityModal(false)}>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select your city</Text>
-              <TouchableOpacity onPress={() => { setShowCityModal(false); setCitySearch(''); }}>
-                <Text style={styles.modalClose}>✕</Text>
-              </TouchableOpacity>
-            </View>
-
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search city..."
-              placeholderTextColor={Colors.textLight}
-              value={citySearch}
-              onChangeText={setCitySearch}
-              autoFocus
-            />
-
-            {/* Auto-detect option */}
-            <TouchableOpacity
-              style={styles.detectButton}
-              onPress={async () => {
-                setShowCityModal(false);
-                setCitySearch('');
-                await location.refresh();
-                await refresh();
-              }}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.detectEmoji}>📍</Text>
-              <Text style={styles.detectText}>Auto-detect my location</Text>
-            </TouchableOpacity>
-
-            <FlatList
-              data={filteredCities}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.cityItem}
-                  onPress={() => selectCity(item)}
-                  activeOpacity={0.6}
-                >
-                  <Text style={styles.cityItemText}>{item}</Text>
-                </TouchableOpacity>
-              )}
-              style={styles.cityList}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 }
@@ -220,12 +140,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl, paddingTop: Spacing.md, paddingBottom: Spacing.lg,
   },
   appName: { fontSize: Typography.size.lg, fontWeight: Typography.weight.bold, color: Colors.primary },
-  cityRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginTop: 4 },
-  cityText: { fontSize: Typography.size.sm, color: Colors.textSecondary },
-  changeCity: { fontSize: Typography.size.xs, color: Colors.primary, fontWeight: Typography.weight.medium },
+  cityText: { fontSize: Typography.size.sm, color: Colors.textSecondary, marginTop: 4 },
   updated: { fontSize: Typography.size.xs, color: Colors.textLight, marginTop: 4 },
 
-  // Offline
   offlineBanner: {
     backgroundColor: Colors.moderateBg, marginHorizontal: Spacing.xl,
     borderRadius: BorderRadius.md, padding: Spacing.sm + 2, marginBottom: Spacing.md,
@@ -240,35 +157,4 @@ const styles = StyleSheet.create({
   errorEmoji: { fontSize: 48 },
   errorText: { fontSize: Typography.size.md, fontWeight: Typography.weight.semibold, color: Colors.text },
   errorHint: { fontSize: Typography.size.sm, color: Colors.textSecondary },
-
-  // Modal
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  modalContent: {
-    backgroundColor: Colors.card, borderTopLeftRadius: 20, borderTopRightRadius: 20,
-    paddingHorizontal: Spacing.xl, paddingTop: Spacing.lg, paddingBottom: Spacing.xxl,
-    maxHeight: '70%',
-  },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.lg },
-  modalTitle: { fontSize: Typography.size.lg, fontWeight: Typography.weight.bold, color: Colors.text },
-  modalClose: { fontSize: 20, color: Colors.textSecondary, padding: Spacing.sm },
-
-  searchInput: {
-    backgroundColor: Colors.inputBg, borderWidth: 1, borderColor: Colors.border,
-    borderRadius: BorderRadius.md, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md,
-    fontSize: Typography.size.body, color: Colors.text, marginBottom: Spacing.md,
-  },
-
-  detectButton: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.sm,
-    backgroundColor: Colors.primaryLight, borderRadius: BorderRadius.md,
-    padding: Spacing.md, marginBottom: Spacing.md,
-  },
-  detectEmoji: { fontSize: 16 },
-  detectText: { fontSize: Typography.size.sm, color: Colors.primaryDark, fontWeight: Typography.weight.semibold },
-
-  cityList: { flex: 1 },
-  cityItem: {
-    paddingVertical: Spacing.md, borderBottomWidth: 1, borderBottomColor: Colors.borderLight,
-  },
-  cityItemText: { fontSize: Typography.size.body, color: Colors.text },
 });

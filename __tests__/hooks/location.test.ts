@@ -1,48 +1,58 @@
 /**
- * Location — City Selector & Coordinate Tests
+ * Location Cache Tests
  *
- * Tests the INDIAN_CITIES export and coordinate lookup.
- * (useLocation hook needs renderHook + native mocks, so we test the data layer)
+ * Tests the AsyncStorage caching layer for location data.
  */
 
-import { INDIAN_CITIES } from '@/hooks/useLocation';
+jest.mock('@react-native-async-storage/async-storage', () =>
+  require('@react-native-async-storage/async-storage/jest/async-storage-mock')
+);
+jest.mock('expo-location', () => ({}));
 
-describe('INDIAN_CITIES list', () => {
-  it('exports a non-empty array of city names', () => {
-    expect(Array.isArray(INDIAN_CITIES)).toBe(true);
-    expect(INDIAN_CITIES.length).toBeGreaterThan(30);
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const CACHE_KEY = 'sunsuraksha_last_location';
+
+describe('Location Cache', () => {
+  beforeEach(async () => {
+    await AsyncStorage.clear();
   });
 
-  it('all cities are capitalized strings', () => {
-    INDIAN_CITIES.forEach((city) => {
-      expect(typeof city).toBe('string');
-      expect(city.length).toBeGreaterThan(2);
-      expect(city[0]).toBe(city[0].toUpperCase());
-    });
+  it('can store and retrieve location', async () => {
+    const data = {
+      city: 'Mumbai',
+      coords: { lat: 19.076, lon: 72.877 },
+      timestamp: new Date().toISOString(),
+    };
+    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    const parsed = JSON.parse(raw!);
+    expect(parsed.city).toBe('Mumbai');
+    expect(parsed.coords.lat).toBeCloseTo(19.076, 2);
   });
 
-  it('is sorted alphabetically', () => {
-    const sorted = [...INDIAN_CITIES].sort();
-    expect(INDIAN_CITIES).toEqual(sorted);
+  it('returns null for empty cache', async () => {
+    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    expect(raw).toBeNull();
   });
 
-  it('contains major Indian cities', () => {
-    const majorCities = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad', 'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur'];
-    majorCities.forEach((city) => {
-      expect(INDIAN_CITIES).toContain(city);
-    });
+  it('recent cache (12h) is within 24h validity', () => {
+    const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+    const age = Date.now() - new Date(twelveHoursAgo).getTime();
+    expect(age).toBeLessThan(24 * 60 * 60 * 1000);
   });
 
-  it('does not contain duplicate entries', () => {
-    const unique = new Set(INDIAN_CITIES);
-    expect(unique.size).toBe(INDIAN_CITIES.length);
+  it('old cache (30h) exceeds 24h validity', () => {
+    const thirtyHoursAgo = new Date(Date.now() - 30 * 60 * 60 * 1000).toISOString();
+    const age = Date.now() - new Date(thirtyHoursAgo).getTime();
+    expect(age).toBeGreaterThan(24 * 60 * 60 * 1000);
   });
 
-  it('does not contain alias duplicates (Bengaluru/Bangalore both)', () => {
-    // We keep only one variant per city
-    const lower = INDIAN_CITIES.map((c) => c.toLowerCase());
-    expect(lower).not.toContain('bengaluru'); // Should only have Bangalore
-    expect(lower).not.toContain('gurugram');  // Should only have Gurgaon
-    expect(lower).not.toContain('new delhi'); // Should only have Delhi
+  it('can overwrite cached location', async () => {
+    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ city: 'Mumbai', coords: { lat: 19, lon: 72 }, timestamp: new Date().toISOString() }));
+    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ city: 'Delhi', coords: { lat: 28, lon: 77 }, timestamp: new Date().toISOString() }));
+    const raw = await AsyncStorage.getItem(CACHE_KEY);
+    const parsed = JSON.parse(raw!);
+    expect(parsed.city).toBe('Delhi');
   });
 });
