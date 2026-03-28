@@ -101,8 +101,21 @@ export function useWeather(params: UseWeatherParams): UseWeatherResult {
         setIsOffline(true);
         setError('Using cached data — no internet');
       } else {
-        setError('No weather data available');
+        // No cache either — use mock data so app still works
+        const mockData: WeatherData = {
+          city: city || 'Mumbai',
+          temp_c: 35,
+          feels_like_c: 38,
+          humidity_pct: 60,
+          uv_index: 6,
+          wind_speed_kmh: 12,
+          description: 'Data unavailable',
+          icon: '01d',
+          updated_at: new Date().toISOString(),
+        };
+        setWeather(mockData);
         setIsOffline(true);
+        setError('Offline — showing estimated data');
       }
     } finally {
       setLoading(false);

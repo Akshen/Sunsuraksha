@@ -66,7 +66,7 @@ export async function fetchWeather(city: string): Promise<WeatherData> {
   const apiKey = Config.OPENWEATHER_API_KEY;
 
   if (!apiKey || apiKey === '') {
-    console.warn('OpenWeather API key not set — returning mock data');
+    
     return getMockWeather(city);
   }
 
@@ -96,8 +96,8 @@ export async function fetchWeather(city: string): Promise<WeatherData> {
       updated_at: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Failed to fetch weather:', error);
-    return getMockWeather(city);
+    // Network failure — throw so useWeather hook can fallback to cache
+    throw new Error(`Network request failed for ${city}`);
   }
 }
 
@@ -137,8 +137,7 @@ export async function fetchWeatherByCoords(
       updated_at: new Date().toISOString(),
     };
   } catch (error) {
-    console.error('Failed to fetch weather by coords:', error);
-    return getMockWeather('Your location');
+    throw new Error('Network request failed for coordinates');
   }
 }
 

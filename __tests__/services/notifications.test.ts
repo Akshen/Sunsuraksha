@@ -1,9 +1,20 @@
 /**
  * Notification Service Tests
  *
- * Verifies that all notification functions return gracefully
- * without crashing, regardless of environment.
+ * Mock expo-notifications to prevent Expo Go warning in tests.
  */
+
+jest.mock('expo-notifications', () => ({
+  requestPermissionsAsync: jest.fn().mockResolvedValue({ status: 'denied' }),
+  scheduleNotificationAsync: jest.fn().mockResolvedValue('mock-id'),
+  cancelAllScheduledNotificationsAsync: jest.fn().mockResolvedValue(undefined),
+  setNotificationHandler: jest.fn(),
+  SchedulableTriggerInputTypes: { TIME_INTERVAL: 'timeInterval' },
+}));
+
+jest.mock('expo-constants', () => ({
+  appOwnership: 'standalone',
+}));
 
 import {
   requestNotificationPermissions,
@@ -13,20 +24,15 @@ import {
   setupDailyHydrationReminders,
 } from '@/services/notifications';
 
-describe('Notification Service (safe in all environments)', () => {
+describe('Notification Service', () => {
   it('requestNotificationPermissions returns a boolean', async () => {
     const result = await requestNotificationPermissions();
     expect(typeof result).toBe('boolean');
   });
 
-  it('scheduleHydrationReminder returns string or null without throwing', async () => {
-    try {
-      const result = await scheduleHydrationReminder(30, 42);
-      expect(result === null || typeof result === 'string').toBe(true);
-    } catch {
-      // In test environment, expo-notifications may throw — that's OK
-      expect(true).toBe(true);
-    }
+  it('scheduleHydrationReminder returns a string ID', async () => {
+    const result = await scheduleHydrationReminder(30, 42);
+    expect(typeof result).toBe('string');
   });
 
   it('scheduleHeatAlert returns null for low scores', async () => {
@@ -34,21 +40,16 @@ describe('Notification Service (safe in all environments)', () => {
     expect(result).toBeNull();
   });
 
-  it('scheduleHeatAlert accepts danger scores without throwing', async () => {
-    try {
-      const result = await scheduleHeatAlert(85);
-      expect(result === null || typeof result === 'string').toBe(true);
-    } catch {
-      // In test environment, expo-notifications may throw — that's OK
-      expect(true).toBe(true);
-    }
+  it('scheduleHeatAlert returns ID for danger scores', async () => {
+    const result = await scheduleHeatAlert(85);
+    expect(typeof result).toBe('string');
   });
 
-  it('cancelAllNotifications does not throw', async () => {
+  it('cancelAllNotifications resolves without error', async () => {
     await expect(cancelAllNotifications()).resolves.toBeUndefined();
   });
 
-  it('setupDailyHydrationReminders does not throw', async () => {
+  it('setupDailyHydrationReminders resolves without error', async () => {
     await expect(setupDailyHydrationReminders(45, 40)).resolves.toBeUndefined();
   });
 });
