@@ -10,3 +10,15 @@ jest.mock('expo-location', () => ({
   reverseGeocodeAsync: jest.fn().mockResolvedValue([{ city: 'Mumbai' }]),
   Accuracy: { Balanced: 3 },
 }));
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: () => ({
+    from: () => ({
+      select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: null, error: true }) }) }),
+      upsert: () => Promise.resolve({ error: null }),
+    }),
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: null } }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: jest.fn() } } }),
+    },
+  }),
+}));

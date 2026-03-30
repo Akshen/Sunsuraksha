@@ -1,20 +1,20 @@
 /**
- * Weather Service
+ * Weather Service v3 — Supabase Cache + OpenWeatherMap
  *
- * Fetches current weather data from OpenWeatherMap.
- * Uses the FREE tier APIs:
- *   - /data/2.5/weather (current weather — temp, feels_like, humidity, wind)
- *   - /data/2.5/uvi (UV index — included in current weather response for 2.5)
+ * Priority:
+ *   1. Supabase city-level cache (shared across all users in same city)
+ *   2. OpenWeatherMap API (if cache stale/missing)
+ *   3. Mock data (if no API key or offline)
  *
- * Free tier: 1000 calls/day, more than enough for MVP.
- *
- * Sign up: https://openweathermap.org/api
+ * Cache = 30 min freshness per city
+ * 50 cities × 48 refreshes/day = 2,400 API calls total
  */
 
 import { Config } from '@/constants/config';
+import { readWeatherCache, writeWeatherCache } from './weatherCache';
 import type { WeatherData } from '@/types';
 
-// ---- Indian city coordinates (for quick lookup without geocoding) ----
+// ---- Indian city coordinates ----
 const INDIAN_CITIES: Record<string, { lat: number; lon: number }> = {
   'delhi': { lat: 28.6139, lon: 77.2090 },
   'new delhi': { lat: 28.6139, lon: 77.2090 },
@@ -36,7 +36,6 @@ const INDIAN_CITIES: Record<string, { lat: number; lon: number }> = {
   'surat': { lat: 21.1702, lon: 72.8311 },
   'chandigarh': { lat: 30.7333, lon: 76.7794 },
   'gurgaon': { lat: 28.4595, lon: 77.0266 },
-  'gurugram': { lat: 28.4595, lon: 77.0266 },
   'noida': { lat: 28.5355, lon: 77.3910 },
   'varanasi': { lat: 25.3176, lon: 82.9739 },
   'ranchi': { lat: 23.3441, lon: 85.3096 },
@@ -49,60 +48,50 @@ const INDIAN_CITIES: Record<string, { lat: number; lon: number }> = {
   'madurai': { lat: 9.9252, lon: 78.1198 },
 };
 
-/**
- * Get coordinates for a city name
- * Falls back to Delhi if city not found
- */
 function getCityCoords(city: string): { lat: number; lon: number } {
   const normalized = city.toLowerCase().trim();
   return INDIAN_CITIES[normalized] || INDIAN_CITIES['mumbai'];
 }
 
 /**
- * Fetch current weather for a city
- * Returns our standardized WeatherData type
+ * Fetch current weather for a city.
+ * Checks Supabase cache first, then hits API if stale.
  */
 export async function fetchWeather(city: string): Promise<WeatherData> {
   const apiKey = Config.OPENWEATHER_API_KEY;
+  const normalizedCity = city || 'Mumbai';
 
+  // No API key = mock mode (development/testing)
   if (!apiKey || apiKey === '') {
-    
-    return getMockWeather(city);
+    return getMockWeather(normalizedCity);
   }
 
-  const coords = getCityCoords(city);
+  // Step 1: Check Supabase cache
+  try {
+    const cached = await readWeatherCache(normalizedCity);
+    if (cached) return cached;
+  } catch {
+    // Supabase unavailable — continue to API
+  }
+
+  // Step 2: Call OpenWeatherMap
+  const coords = getCityCoords(normalizedCity);
 
   try {
-    const url = `${Config.OPENWEATHER_BASE_URL}/weather?lat=${coords.lat}&lon=${coords.lon}&appid=${apiKey}&units=metric`;
+    const weather = await fetchFromOpenWeather(normalizedCity, coords.lat, coords.lon, apiKey);
 
-    const response = await fetch(url);
+    // Step 3: Write to Supabase cache (fire-and-forget)
+    writeWeatherCache(normalizedCity, weather, coords).catch(() => {});
 
-    if (!response.ok) {
-      console.error(`Weather API error: ${response.status}`);
-      return getMockWeather(city);
-    }
-
-    const data = await response.json();
-
-    return {
-      city: city || 'Mumbai',
-      temp_c: Math.round(data.main.temp * 10) / 10,
-      feels_like_c: Math.round(data.main.feels_like * 10) / 10,
-      humidity_pct: data.main.humidity,
-      uv_index: data.uvi ?? estimateUV(),  // UV may not be in free 2.5 response
-      wind_speed_kmh: Math.round(data.wind.speed * 3.6), // m/s → km/h
-      description: data.weather?.[0]?.description ?? 'Clear',
-      icon: data.weather?.[0]?.icon ?? '01d',
-      updated_at: new Date().toISOString(),
-    };
-  } catch (error) {
-    // Network failure — throw so useWeather hook can fallback to cache
-    throw new Error(`Network request failed for ${city}`);
+    return weather;
+  } catch {
+    throw new Error(`Network request failed for ${normalizedCity}`);
   }
 }
 
 /**
- * Fetch weather by exact coordinates (for GPS-based location)
+ * Fetch weather by exact GPS coordinates.
+ * Checks Supabase cache using nearest known city, then hits API.
  */
 export async function fetchWeatherByCoords(
   lat: number,
@@ -114,48 +103,91 @@ export async function fetchWeatherByCoords(
     return getMockWeather('Your location');
   }
 
+  // Find nearest known city for cache lookup
+  const nearestCity = findNearestCity(lat, lon);
+
+  // Step 1: Check Supabase cache
   try {
-    const url = `${Config.OPENWEATHER_BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    const cached = await readWeatherCache(nearestCity);
+    if (cached) return cached;
+  } catch {
+    // Continue to API
+  }
 
-    const response = await fetch(url);
+  // Step 2: Call OpenWeatherMap with exact coords
+  try {
+    const weather = await fetchFromOpenWeather(nearestCity, lat, lon, apiKey);
 
-    if (!response.ok) {
-      return getMockWeather('Your location');
-    }
+    // Step 3: Cache it
+    writeWeatherCache(nearestCity, weather, { lat, lon }).catch(() => {});
 
-    const data = await response.json();
-
-    return {
-      city: data.name || 'Your location',
-      temp_c: Math.round(data.main.temp * 10) / 10,
-      feels_like_c: Math.round(data.main.feels_like * 10) / 10,
-      humidity_pct: data.main.humidity,
-      uv_index: data.uvi ?? estimateUV(),
-      wind_speed_kmh: Math.round(data.wind.speed * 3.6),
-      description: data.weather?.[0]?.description ?? 'Clear',
-      icon: data.weather?.[0]?.icon ?? '01d',
-      updated_at: new Date().toISOString(),
-    };
-  } catch (error) {
+    return weather;
+  } catch {
     throw new Error('Network request failed for coordinates');
   }
 }
 
-/**
- * Estimate UV index based on time of day (fallback when API doesn't include it)
- */
-function estimateUV(): number {
-  const hour = new Date().getHours();
-  if (hour >= 11 && hour <= 14) return 9;   // Peak
-  if (hour >= 9 && hour <= 16) return 6;    // High
-  if (hour >= 7 && hour <= 18) return 3;    // Moderate
-  return 0;                                   // Night
+// ---- Internal helpers ----
+
+async function fetchFromOpenWeather(
+  cityName: string,
+  lat: number,
+  lon: number,
+  apiKey: string
+): Promise<WeatherData> {
+  const url = `${Config.OPENWEATHER_BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    return getMockWeather(cityName);
+  }
+
+  const data = await response.json();
+
+  return {
+    city: cityName || data.name || 'Your location',
+    temp_c: Math.round(data.main.temp * 10) / 10,
+    feels_like_c: Math.round(data.main.feels_like * 10) / 10,
+    humidity_pct: data.main.humidity,
+    uv_index: data.uvi ?? estimateUV(),
+    wind_speed_kmh: Math.round(data.wind.speed * 3.6),
+    description: data.weather?.[0]?.description ?? 'Clear',
+    icon: data.weather?.[0]?.icon ?? '01d',
+    updated_at: new Date().toISOString(),
+  };
 }
 
 /**
- * Mock weather data — used when API key is missing or API fails
- * Returns realistic Indian summer values
+ * Find the nearest known Indian city to given coordinates.
+ * Used for cache key when user is at a GPS position.
  */
+function findNearestCity(lat: number, lon: number): string {
+  let nearest = 'mumbai';
+  let minDist = Infinity;
+
+  for (const [city, coords] of Object.entries(INDIAN_CITIES)) {
+    // Simple Euclidean distance (good enough for same-country)
+    const dist = Math.sqrt(
+      Math.pow(lat - coords.lat, 2) + Math.pow(lon - coords.lon, 2)
+    );
+    if (dist < minDist) {
+      minDist = dist;
+      nearest = city;
+    }
+  }
+
+  return nearest;
+}
+
+function estimateUV(): number {
+  const hour = new Date().getHours();
+  if (hour >= 11 && hour <= 14) return 9;
+  if (hour >= 9 && hour <= 16) return 6;
+  if (hour >= 7 && hour <= 18) return 3;
+  return 0;
+}
+
 function getMockWeather(city: string): WeatherData {
   const hour = new Date().getHours();
   const isDaytime = hour >= 6 && hour <= 19;

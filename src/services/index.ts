@@ -12,6 +12,7 @@ export { signUp, signIn, signOut, getSession, getCurrentUserId, onAuthStateChang
 export { getProfile, updateProfile, completeOnboarding } from './profile';
 export { logWater, getTodayLogs, getTodayTotal, deleteLog } from './hydration';
 export { fetchWeather, fetchWeatherByCoords } from './weather';
+export { readWeatherCache, writeWeatherCache } from './weatherCache';
 export {
   requestNotificationPermissions,
   scheduleHydrationReminder,
