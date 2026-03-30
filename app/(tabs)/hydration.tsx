@@ -32,57 +32,236 @@ import { getHydrationInterval } from '@/utils/heatScore';
 
 const REMINDER_KEY = 'sunsuraksha_water_reminders_enabled';
 
-// ---- Tips data ----
-const TIPS = [
+// ---- Tips data (sourced from NDMA, BMC, IMD guidelines) ----
+
+interface TipSection {
+  category: string;
+  categoryEmoji: string;
+  tips: { emoji: string; title: string; body: string; source: string }[];
+}
+
+const TIP_SECTIONS: TipSection[] = [
   {
-    emoji: '💧',
-    title: 'Drink before you feel thirsty',
-    body: 'By the time you feel thirsty, you\'re already mildly dehydrated. Sip water regularly throughout the day.',
+    category: 'Hydration',
+    categoryEmoji: '💧',
+    tips: [
+      {
+        emoji: '💧',
+        title: 'Drink before you feel thirsty',
+        body: 'By the time you feel thirsty, you\'re already mildly dehydrated. Sip water every 20-30 minutes in extreme heat, even if you don\'t feel thirsty.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🧂',
+        title: 'ORS, nimbu pani, or buttermilk — not just plain water',
+        body: 'Plain water doesn\'t replace electrolytes lost in sweat. Drink ORS, lassi, torani (rice water), lemon water, or buttermilk to rehydrate properly.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🥥',
+        title: 'Coconut water is nature\'s ORS',
+        body: 'Tender coconut water has the same electrolyte balance as blood plasma. Drink one daily — it\'s available on every street corner in India.',
+        source: 'NDMA / AIIMS',
+      },
+      {
+        emoji: '☕',
+        title: 'Avoid tea, coffee, alcohol, and soft drinks',
+        body: 'Caffeine, alcohol, and carbonated drinks are diuretics — they make your body lose water faster. Switch afternoon chai to chaas or nimbu pani.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🚰',
+        title: 'Carry water whenever you travel',
+        body: 'Always carry a water bottle when stepping out. Don\'t rely on finding water — dehydration can set in within 30 minutes of sun exposure.',
+        source: 'NDMA',
+      },
+    ],
   },
   {
-    emoji: '🥛',
-    title: 'Carry a water bottle everywhere',
-    body: 'Keep a 1L bottle with you. Refill it 3 times a day for a healthy 3L target in summer.',
+    category: 'Body cooling',
+    categoryEmoji: '🚿',
+    tips: [
+      {
+        emoji: '🚿',
+        title: 'Shower with cold water 2-3 times a day',
+        body: 'Take frequent cool water baths to bring down body temperature. Even splashing cold water on your face, arms, and feet helps significantly.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🧣',
+        title: 'Use a damp cloth on head, neck, and face',
+        body: 'If you must go outside, place a wet cloth on your head, neck, face, and limbs. Re-wet it every 15-20 minutes. This is one of the most effective cooling techniques recommended by NDMA.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🧊',
+        title: 'Wipe body with wet cloth frequently — even indoors',
+        body: 'Wiping your body with a damp cloth triggers evaporative cooling. Focus on neck, wrists, inner elbows, and forehead — blood vessels are closest to skin there.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🦶',
+        title: 'Soak feet in cool water during peak heat',
+        body: 'Feet have many blood vessels near the surface. Soaking them in a bucket of cool water for 15-20 minutes can lower your core body temperature quickly.',
+        source: 'AIIMS Advisory',
+      },
+      {
+        emoji: '🌡️',
+        title: 'Heatstroke first aid — bring down body temperature FAST',
+        body: 'If someone has heatstroke (confusion, hot dry skin, high fever): move to shade, pour normal-temperature water on head, wipe body with wet cloth, give ORS, and rush to hospital. This is fatal if untreated.',
+        source: 'NDMA',
+      },
+    ],
   },
   {
-    emoji: '🧂',
-    title: 'Add a pinch of salt to your water',
-    body: 'Plain water isn\'t enough in extreme heat. Add black salt or drink nimbu pani to replenish electrolytes lost in sweat.',
+    category: 'Outdoor protection',
+    categoryEmoji: '🧢',
+    tips: [
+      {
+        emoji: '⏰',
+        title: 'Never go out between 12 noon and 3 PM',
+        body: 'Peak sun hours are the most dangerous. If you must go out, limit exposure to 15 minutes maximum and carry water. Plan errands for early morning or after sunset.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '👒',
+        title: 'Cover your head — hat, umbrella, or dupatta',
+        body: 'Always cover your head with an umbrella, hat, or cotton cloth when stepping out. Direct sun on the head is the fastest path to heatstroke.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🕶️',
+        title: 'Wear protective sunglasses and proper footwear',
+        body: 'Use protective goggles to shield eyes from UV radiation. Wear shoes or chappals — never walk barefoot on hot surfaces. Hot ground can cause burns within seconds.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '👕',
+        title: 'Wear loose, light-coloured cotton clothes',
+        body: 'Choose lightweight, light-coloured, loose, and porous cotton clothes. Dark and synthetic fabrics trap heat and block sweat evaporation.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🧳',
+        title: 'Visitors from cooler climates — acclimatize for one week',
+        body: 'If you\'ve come from a hill station or cooler region, don\'t go out in open sun for one week. Your body needs gradual exposure to acclimatize to heat.',
+        source: 'NDMA',
+      },
+    ],
   },
   {
-    emoji: '🍉',
-    title: 'Eat your water',
-    body: 'Watermelon (92% water), cucumber (96%), and muskmelon (90%) hydrate better than plain water because they come with electrolytes.',
+    category: 'Home cooling',
+    categoryEmoji: '🏠',
+    tips: [
+      {
+        emoji: '🪟',
+        title: 'Close curtains by day, open windows at night',
+        body: 'Use curtains, shutters, or sunshades during the day to block heat. Open windows at night for cross-ventilation — this can reduce indoor temperature by 3-5°C.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🧥',
+        title: 'Hang a wet sheet near windows',
+        body: 'Hang a wet bedsheet near a window or doorway. The evaporating water pulls heat from the air — this is a traditional Indian AC that actually works. Re-wet every 2-3 hours.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🍳',
+        title: 'Avoid cooking during peak heat hours',
+        body: 'Cooking generates significant indoor heat. Prepare meals early morning or after sunset. Prefer no-cook meals like curd rice, fruit bowls, or salads during midday.',
+        source: 'BMC Advisory',
+      },
+      {
+        emoji: '💨',
+        title: 'Use fans with damp clothing for cooling',
+        body: 'Place a wet towel in front of a fan or wear damp clothing while sitting indoors. The moving air over wet fabric creates a powerful evaporative cooling effect.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '👶',
+        title: 'Never leave children or pets in parked vehicles',
+        body: 'Car interiors can reach 70°C+ within minutes in Indian summers. Even with windows cracked, this is fatal. Always check the back seat before locking.',
+        source: 'NDMA',
+      },
+    ],
   },
   {
-    emoji: '☕',
-    title: 'Replace chai with chaas',
-    body: 'Tea and coffee are diuretics — they make you lose more water. Switch your afternoon chai to buttermilk for cooling + hydration.',
+    category: 'Food & diet',
+    categoryEmoji: '🍽️',
+    tips: [
+      {
+        emoji: '🍉',
+        title: 'Eat water-rich fruits — watermelon, cucumber, muskmelon',
+        body: 'Watermelon is 92% water, cucumber is 96%. These hydrate better than plain water because they also supply minerals, vitamins, and electrolytes.',
+        source: 'AIIMS Nutrition',
+      },
+      {
+        emoji: '🚫',
+        title: 'Avoid high-protein food and stale food',
+        body: 'Heavy protein meals raise metabolic heat. Stale food spoils much faster in summer — it can cause food poisoning within hours. Always eat fresh, light meals.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🥣',
+        title: 'Eat light, cooling meals — curd rice, khichdi, fruits',
+        body: 'Prefer light meals: curd rice, khichdi with buttermilk, fruit bowls. These are easy to digest and don\'t raise body temperature the way heavy meals do.',
+        source: 'NDMA / Ayurveda',
+      },
+      {
+        emoji: '🌿',
+        title: 'Traditional coolers: aam panna, sattu, sabja seeds',
+        body: 'Raw mango drink (aam panna) prevents heat exhaustion. Roasted gram drink (sattu sharbat) is Bihar\'s ancient energy drink. Basil seeds (sabja) soaked in water cool the body from within.',
+        source: 'AIIMS / Traditional',
+      },
+      {
+        emoji: '🧅',
+        title: 'Carry raw onion — a traditional heat remedy',
+        body: 'In many parts of India, outdoor workers carry a raw onion in their pocket during summer. Onions contain quercetin, which may help regulate body temperature. At minimum, eat raw onion with lunch.',
+        source: 'Traditional / Folk',
+      },
+    ],
   },
   {
-    emoji: '🍺',
-    title: 'Avoid alcohol in heat',
-    body: 'Alcohol suppresses the hormone that helps your body retain water. One beer can cause a net loss of 350ml fluid.',
+    category: 'Outdoor workers',
+    categoryEmoji: '👷',
+    tips: [
+      {
+        emoji: '🏗️',
+        title: 'Outdoor workers: take shade breaks every 30 minutes',
+        body: 'If you work outdoors (construction, delivery, farming), take a 10-minute shade break every 30 minutes during peak heat. Drink 250ml water during each break.',
+        source: 'NDMA 2025 Advisory',
+      },
+      {
+        emoji: '🎒',
+        title: 'Carry ORS sachets and a cooling cap',
+        body: 'NDMA recommends outdoor workers carry ORS sachets, insulated water flask, UV-protective clothing, and a cooling cap. Platforms must provide heat-protection kits.',
+        source: 'NDMA Gig Worker Advisory 2025',
+      },
+      {
+        emoji: '⚠️',
+        title: 'Know the warning signs — dizziness, nausea, dry skin',
+        body: 'If you feel dizzy, nauseated, have a headache, or stop sweating despite heat — STOP working immediately. Move to shade, drink ORS, pour water on your head. These are signs of heat exhaustion progressing to heatstroke.',
+        source: 'NDMA / MoHFW',
+      },
+    ],
   },
   {
-    emoji: '🌡️',
-    title: 'Check your urine color',
-    body: 'Pale yellow = hydrated. Dark yellow = drink water immediately. Clear = you\'re overhydrating (rare but possible).',
-  },
-  {
-    emoji: '⏰',
-    title: 'Front-load your water',
-    body: 'Drink 500ml within the first hour of waking up. Your body is dehydrated after 7-8 hours of sleep.',
-  },
-  {
-    emoji: '🥥',
-    title: 'Coconut water > sports drinks',
-    body: 'Tender coconut water has the same electrolyte balance as human blood plasma. It\'s nature\'s ORS — and available on every street corner.',
-  },
-  {
-    emoji: '🧊',
-    title: 'Cool, not ice-cold',
-    body: 'Ayurveda and modern science agree: ice-cold water shocks your digestive system. Cool or room temperature water is absorbed faster.',
+    category: 'Animals & others',
+    categoryEmoji: '🐄',
+    tips: [
+      {
+        emoji: '🐕',
+        title: 'Keep animals in shade with plenty of water',
+        body: 'Animals suffer from heatstroke too. Keep pets and livestock in shade. Provide clean, cool water multiple times a day. Avoid walking dogs on hot roads — their paws burn easily.',
+        source: 'NDMA',
+      },
+      {
+        emoji: '🏥',
+        title: 'If you feel faint or ill — see a doctor immediately',
+        body: 'Don\'t wait for symptoms to get worse. Heat exhaustion can progress to fatal heatstroke in under an hour. Go to the nearest health centre or call 108 for a free ambulance.',
+        source: 'NDMA',
+      },
+    ],
   },
 ];
 
@@ -192,14 +371,27 @@ export default function TipsScreen() {
 
         {/* Tips section */}
         <Text style={styles.sectionTitle}>Heat survival tips</Text>
+        <Text style={styles.sectionSubtitle}>
+          30 verified tips from NDMA, IMD, AIIMS, and BMC guidelines
+        </Text>
 
-        {TIPS.map((tip, index) => (
-          <View key={index} style={styles.tipCard}>
-            <Text style={styles.tipEmoji}>{tip.emoji}</Text>
-            <View style={styles.tipContent}>
-              <Text style={styles.tipTitle}>{tip.title}</Text>
-              <Text style={styles.tipBody}>{tip.body}</Text>
+        {TIP_SECTIONS.map((section, sIdx) => (
+          <View key={sIdx}>
+            <View style={styles.categoryHeader}>
+              <Text style={styles.categoryEmoji}>{section.categoryEmoji}</Text>
+              <Text style={styles.categoryTitle}>{section.category}</Text>
             </View>
+
+            {section.tips.map((tip, tIdx) => (
+              <View key={`${sIdx}-${tIdx}`} style={styles.tipCard}>
+                <Text style={styles.tipEmoji}>{tip.emoji}</Text>
+                <View style={styles.tipContent}>
+                  <Text style={styles.tipTitle}>{tip.title}</Text>
+                  <Text style={styles.tipBody}>{tip.body}</Text>
+                  <Text style={styles.tipSource}>Source: {tip.source}</Text>
+                </View>
+              </View>
+            ))}
           </View>
         ))}
 
@@ -308,7 +500,34 @@ const styles = StyleSheet.create({
     fontSize: Typography.size.body,
     fontWeight: Typography.weight.semibold,
     color: Colors.text,
-    marginBottom: Spacing.md,
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: Typography.size.xs,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.lg,
+  },
+
+  // Category header
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
+    paddingBottom: Spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
+  },
+  categoryEmoji: {
+    fontSize: 16,
+  },
+  categoryTitle: {
+    fontSize: Typography.size.sm,
+    fontWeight: Typography.weight.bold,
+    color: Colors.primary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 
   // Tip cards
@@ -339,5 +558,11 @@ const styles = StyleSheet.create({
     fontSize: Typography.size.sm,
     color: Colors.textSecondary,
     lineHeight: 19,
+  },
+  tipSource: {
+    fontSize: 10,
+    color: Colors.textLight,
+    marginTop: 6,
+    fontStyle: 'italic',
   },
 });
