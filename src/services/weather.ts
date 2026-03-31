@@ -1,16 +1,18 @@
 /**
- * Weather Service v3 — Supabase Cache + OpenWeatherMap
+ * Weather Service v4 — Dual API with Supabase Cache
  *
- * Priority:
- *   1. Supabase city-level cache (shared across all users in same city)
- *   2. OpenWeatherMap API (if cache stale/missing)
- *   3. Mock data (if no API key or offline)
+ * Priority chain:
+ *   1. Supabase city-level cache (< 2hr)
+ *   2. Open-Meteo (FREE, no key, unlimited, any GPS coordinate)
+ *   3. OpenWeatherMap (fallback, only if API key exists)
+ *   4. Mock data (offline / both APIs down)
  *
- * Cache = 30 min freshness per city
- * 50 cities × 48 refreshes/day = 2,400 API calls total
+ * Open-Meteo as primary = $0 cost at any scale.
+ * OpenWeatherMap as fallback = extra reliability.
  */
 
 import { Config } from '@/constants/config';
+import { fetchFromOpenMeteo } from './openMeteo';
 import { readWeatherCache, writeWeatherCache } from './weatherCache';
 import type { WeatherData } from '@/types';
 
@@ -54,93 +56,90 @@ function getCityCoords(city: string): { lat: number; lon: number } {
 }
 
 /**
- * Fetch current weather for a city.
- * Checks Supabase cache first, then hits API if stale.
+ * Fetch weather for a city name.
+ * Uses cache → Open-Meteo → OpenWeatherMap → mock.
  */
 export async function fetchWeather(city: string): Promise<WeatherData> {
-  const apiKey = Config.OPENWEATHER_API_KEY;
   const normalizedCity = city || 'Mumbai';
-
-  // No API key = mock mode (development/testing)
-  if (!apiKey || apiKey === '') {
-    return getMockWeather(normalizedCity);
-  }
 
   // Step 1: Check Supabase cache
   try {
     const cached = await readWeatherCache(normalizedCity);
     if (cached) return cached;
-  } catch {
-    // Supabase unavailable — continue to API
-  }
+  } catch {}
 
-  // Step 2: Call OpenWeatherMap
+  // Step 2: Try Open-Meteo (free, no key)
   const coords = getCityCoords(normalizedCity);
-
   try {
-    const weather = await fetchFromOpenWeather(normalizedCity, coords.lat, coords.lon, apiKey);
-
-    // Step 3: Write to Supabase cache (fire-and-forget)
+    const weather = await fetchFromOpenMeteo(coords.lat, coords.lon, normalizedCity);
     writeWeatherCache(normalizedCity, weather, coords).catch(() => {});
-
     return weather;
-  } catch {
-    throw new Error(`Network request failed for ${normalizedCity}`);
+  } catch {}
+
+  // Step 3: Try OpenWeatherMap (fallback, needs key)
+  const apiKey = Config.OPENWEATHER_API_KEY;
+  if (apiKey && apiKey !== '') {
+    try {
+      const weather = await fetchFromOpenWeatherMap(normalizedCity, coords.lat, coords.lon, apiKey);
+      writeWeatherCache(normalizedCity, weather, coords).catch(() => {});
+      return weather;
+    } catch {}
   }
+
+  // Step 4: Everything failed — throw so useWeather triggers local cache
+  throw new Error(`All weather sources failed for ${normalizedCity}`);
 }
 
 /**
  * Fetch weather by exact GPS coordinates.
- * Checks Supabase cache using nearest known city, then hits API.
+ * Works for ANY location — not limited to known cities.
  */
 export async function fetchWeatherByCoords(
   lat: number,
   lon: number
 ): Promise<WeatherData> {
-  const apiKey = Config.OPENWEATHER_API_KEY;
-
-  if (!apiKey || apiKey === '') {
-    return getMockWeather('Your location');
-  }
-
-  // Find nearest known city for cache lookup
   const nearestCity = findNearestCity(lat, lon);
 
   // Step 1: Check Supabase cache
   try {
     const cached = await readWeatherCache(nearestCity);
     if (cached) return cached;
-  } catch {
-    // Continue to API
-  }
+  } catch {}
 
-  // Step 2: Call OpenWeatherMap with exact coords
+  // Step 2: Try Open-Meteo with exact GPS coords
   try {
-    const weather = await fetchFromOpenWeather(nearestCity, lat, lon, apiKey);
-
-    // Step 3: Cache it
+    const weather = await fetchFromOpenMeteo(lat, lon, nearestCity);
     writeWeatherCache(nearestCity, weather, { lat, lon }).catch(() => {});
-
     return weather;
-  } catch {
-    throw new Error('Network request failed for coordinates');
+  } catch {}
+
+  // Step 3: Try OpenWeatherMap
+  const apiKey = Config.OPENWEATHER_API_KEY;
+  if (apiKey && apiKey !== '') {
+    try {
+      const weather = await fetchFromOpenWeatherMap(nearestCity, lat, lon, apiKey);
+      writeWeatherCache(nearestCity, weather, { lat, lon }).catch(() => {});
+      return weather;
+    } catch {}
   }
+
+  // Step 4: Everything failed
+  throw new Error('All weather sources failed for coordinates');
 }
 
-// ---- Internal helpers ----
+// ---- OpenWeatherMap (fallback) ----
 
-async function fetchFromOpenWeather(
+async function fetchFromOpenWeatherMap(
   cityName: string,
   lat: number,
   lon: number,
   apiKey: string
 ): Promise<WeatherData> {
   const url = `${Config.OPENWEATHER_BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
-
   const response = await fetch(url);
 
   if (!response.ok) {
-    return getMockWeather(cityName);
+    throw new Error(`OpenWeatherMap API error: ${response.status}`);
   }
 
   const data = await response.json();
@@ -158,16 +157,13 @@ async function fetchFromOpenWeather(
   };
 }
 
-/**
- * Find the nearest known Indian city to given coordinates.
- * Used for cache key when user is at a GPS position.
- */
+// ---- Helpers ----
+
 function findNearestCity(lat: number, lon: number): string {
   let nearest = 'mumbai';
   let minDist = Infinity;
 
   for (const [city, coords] of Object.entries(INDIAN_CITIES)) {
-    // Simple Euclidean distance (good enough for same-country)
     const dist = Math.sqrt(
       Math.pow(lat - coords.lat, 2) + Math.pow(lon - coords.lon, 2)
     );
@@ -188,7 +184,11 @@ function estimateUV(): number {
   return 0;
 }
 
-function getMockWeather(city: string): WeatherData {
+/**
+ * Get mock weather — used only when ALL sources fail AND local cache is empty.
+ * Exported for tests.
+ */
+export function getMockWeather(city: string): WeatherData {
   const hour = new Date().getHours();
   const isDaytime = hour >= 6 && hour <= 19;
 

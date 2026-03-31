@@ -12,7 +12,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchWeather, fetchWeatherByCoords } from '@/services/weather';
+import { fetchWeather, fetchWeatherByCoords, getMockWeather } from '@/services/weather';
 import { calculateHeatScore } from '@/utils/heatScore';
 import type { WeatherData, HeatScore } from '@/types';
 
@@ -102,17 +102,7 @@ export function useWeather(params: UseWeatherParams): UseWeatherResult {
         setError('Using cached data — no internet');
       } else {
         // No cache either — use mock data so app still works
-        const mockData: WeatherData = {
-          city: city || 'Mumbai',
-          temp_c: 35,
-          feels_like_c: 38,
-          humidity_pct: 60,
-          uv_index: 6,
-          wind_speed_kmh: 12,
-          description: 'Data unavailable',
-          icon: '01d',
-          updated_at: new Date().toISOString(),
-        };
+        const mockData = getMockWeather(city);
         setWeather(mockData);
         setIsOffline(true);
         setError('Offline — showing estimated data');
