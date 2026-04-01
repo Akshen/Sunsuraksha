@@ -1,5 +1,5 @@
 /**
- * SunSuraksha App Configuration
+ * Sun Se Suraksha App Configuration
  *
  * All secrets are read from environment variables.
  * Expo automatically exposes variables prefixed with EXPO_PUBLIC_

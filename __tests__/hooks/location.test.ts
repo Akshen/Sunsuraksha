@@ -11,7 +11,7 @@ jest.mock('expo-location', () => ({}));
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CACHE_KEY = 'sunsuraksha_last_location';
+const CACHE_KEY = 'sunsesuraksha_last_location';
 
 describe('Location Cache', () => {
   beforeEach(async () => {

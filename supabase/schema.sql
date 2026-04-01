@@ -1,5 +1,5 @@
 -- ============================================
--- SunSuraksha — Supabase Database Schema v2
+-- Sun Se Suraksha — Supabase Database Schema v2
 -- Run this in: Supabase Dashboard → SQL Editor → New Query
 --
 -- If you already ran v1, run the migration at the bottom instead.

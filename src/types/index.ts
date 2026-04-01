@@ -1,5 +1,5 @@
 /**
- * SunSuraksha Type Definitions
+ * Sun Se Suraksha Type Definitions
  */
 
 // ---- User ----

@@ -13,7 +13,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CACHE_KEY = 'sunsuraksha_last_location';
+const CACHE_KEY = 'sunsesuraksha_last_location';
 
 interface CachedLocation {
   city: string;

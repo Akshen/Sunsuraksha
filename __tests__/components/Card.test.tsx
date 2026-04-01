@@ -12,10 +12,10 @@ describe('Card', () => {
   it('renders children correctly', () => {
     const { getByText } = render(
       <Card>
-        <Text>Hello SunSuraksha</Text>
+        <Text>Hello Sun Se Suraksha</Text>
       </Card>
     );
-    expect(getByText('Hello SunSuraksha')).toBeTruthy();
+    expect(getByText('Hello Sun Se Suraksha')).toBeTruthy();
   });
 
   it('renders with testID', () => {

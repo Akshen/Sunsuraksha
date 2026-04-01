@@ -1,5 +1,5 @@
 /**
- * SunSuraksha Design Tokens
+ * Sun Se Suraksha Design Tokens
  * 
  * Warm, light palette — easy on the eyes under bright sunlight.
  * All colors tested for WCAG AA contrast against their intended backgrounds.

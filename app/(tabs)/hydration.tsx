@@ -30,7 +30,7 @@ import { useWeather } from '@/hooks/useWeather';
 import { useLocation } from '@/hooks/useLocation';
 import { getHydrationInterval } from '@/utils/heatScore';
 
-const REMINDER_KEY = 'sunsuraksha_water_reminders_enabled';
+const REMINDER_KEY = 'sunsesuraksha_water_reminders_enabled';
 
 // ---- Tips data (sourced from NDMA, BMC, IMD guidelines) ----
 

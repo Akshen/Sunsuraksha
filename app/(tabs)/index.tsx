@@ -75,7 +75,7 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.appName}>SunSuraksha</Text>
+            <Text style={styles.appName}>Sun Se Suraksha</Text>
             <Text style={styles.cityText}>{sourceEmoji} {weather.city}</Text>
           </View>
           <Text style={styles.updated}>

@@ -17,7 +17,7 @@ import { calculateHeatScore } from '@/utils/heatScore';
 import type { WeatherData, HeatScore } from '@/types';
 
 const REFRESH_INTERVAL_MS = 15 * 60 * 1000;
-const CACHE_KEY = 'sunsuraksha_weather_cache';
+const CACHE_KEY = 'sunsesuraksha_weather_cache';
 const CACHE_MAX_AGE_MS = 6 * 60 * 60 * 1000; // 6 hours
 
 interface UseWeatherParams {

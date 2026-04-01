@@ -2,7 +2,7 @@
  * Heat Score Calculator
  *
  * Computes a 0-100 heat danger score from weather data.
- * This is the core intelligence of SunSuraksha — it turns
+ * This is the core intelligence of Sun Se Suraksha — it turns
  * raw weather numbers into a single actionable score.
  *
  * Formula weights (tuned for Indian conditions):

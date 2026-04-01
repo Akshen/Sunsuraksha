@@ -1,5 +1,5 @@
 -- ============================================
--- SunSuraksha — Weather Cache Table
+-- Sun Se Suraksha — Weather Cache Table
 -- Run this in: Supabase Dashboard → SQL Editor → New Query
 --
 -- Purpose: Cache weather per city so all users in the same city

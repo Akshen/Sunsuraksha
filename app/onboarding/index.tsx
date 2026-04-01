@@ -136,7 +136,7 @@ export default function OnboardingScreen() {
           {step === 1 && (
             <>
               <Text style={styles.emoji}>👋</Text>
-              <Text style={styles.title}>Welcome to SunSuraksha</Text>
+              <Text style={styles.title}>Welcome to Sun Se Suraksha</Text>
               <Text style={styles.subtitle}>
                 Let's personalize your experience.{'\n'}
                 Everything is optional — skip if you'd like.

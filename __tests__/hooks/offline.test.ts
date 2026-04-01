@@ -11,7 +11,7 @@ import type { WeatherData } from '@/types';
 
 // AsyncStorage is auto-mocked by jest-expo
 
-const CACHE_KEY = 'sunsuraksha_weather_cache';
+const CACHE_KEY = 'sunsesuraksha_weather_cache';
 
 const mockWeather: WeatherData = {
   city: 'Mumbai',
@@ -83,7 +83,7 @@ describe('Weather Cache — Age Validation', () => {
 });
 
 describe('Location Cache — AsyncStorage', () => {
-  const LOCATION_KEY = 'sunsuraksha_last_location';
+  const LOCATION_KEY = 'sunsesuraksha_last_location';
 
   beforeEach(async () => {
     await AsyncStorage.clear();

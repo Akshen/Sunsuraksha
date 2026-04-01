@@ -1,8 +1,8 @@
-# ☀️ SunSuraksha — Stay Safe, Stay Cool, Stay Ahead of the Sun
+# ☀️ Sun Se Suraksha — Stay Safe, Stay Cool, Stay Ahead of the Sun
 
 **"Given THIS heat, what should I do RIGHT NOW?"**
 
-SunSuraksha is a real-time, personalized heat survival assistant for Indian users. It combines weather intelligence, Indian nutritional science, NDMA-verified safety tips, and behavioral nudges to keep people safe during extreme heat and heatwaves.
+Sun Se Suraksha is a real-time, personalized heat survival assistant for Indian users. It combines weather intelligence, Indian nutritional science, NDMA-verified safety tips, and behavioral nudges to keep people safe during extreme heat and heatwaves.
 
 ## Tech Stack
 
@@ -64,8 +64,8 @@ Fallback chain: Supabase cache → OpenWeatherMap API → AsyncStorage local cac
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/SunSuraksha.git
-cd SunSuraksha
+git clone https://github.com/YOUR_USERNAME/Sun Se Suraksha.git
+cd Sun Se Suraksha
 npm install
 ```
 
@@ -114,7 +114,7 @@ eas build --platform android --profile production
 ## Project Structure
 
 ```
-SunSuraksha/
+Sun Se Suraksha/
 ├── .github/workflows/ci.yml       # GitHub Actions CI/CD
 ├── __tests__/                      # 20 test files, 200+ tests
 │   ├── assets/                     # Asset integrity tests
@@ -211,7 +211,7 @@ npx jest --coverage   # With coverage report
 - [x] SOS emergency screen (symptoms, first aid, 5 helplines)
 - [x] Offline mode (weather 6hr cache, location 24hr cache)
 - [x] Push notifications (Expo Go safe, production-ready)
-- [x] SunSuraksha logo (app icon, adaptive icon, splash, favicon)
+- [x] Sun Se Suraksha logo (app icon, adaptive icon, splash, favicon)
 - [x] 20 test suites, 200+ tests, all passing
 - [x] EAS Build config (dev, preview APK, production AAB)
 
