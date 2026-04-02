@@ -16,7 +16,14 @@ import {
   StyleSheet,
   Alert,
   Platform,
+  LayoutAnimation,
+  UIManager,
 } from 'react-native';
+
+// Enable LayoutAnimation on Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/theme';
@@ -30,7 +37,7 @@ import { useWeather } from '@/hooks/useWeather';
 import { useLocation } from '@/hooks/useLocation';
 import { getHydrationInterval } from '@/utils/heatScore';
 
-const REMINDER_KEY = 'sunsesuraksha_water_reminders_enabled';
+const REMINDER_KEY = 'sunsuraksha_water_reminders_enabled';
 
 // ---- Tips data (sourced from NDMA, BMC, IMD guidelines) ----
 
@@ -268,6 +275,7 @@ const TIP_SECTIONS: TipSection[] = [
 export default function TipsScreen() {
   const [remindersEnabled, setRemindersEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({ 0: true });
 
   const location = useLocation();
   const { weather, heatScore } = useWeather({ city: location.city, coords: location.coords });
@@ -372,28 +380,50 @@ export default function TipsScreen() {
         {/* Tips section */}
         <Text style={styles.sectionTitle}>Heat survival tips</Text>
         <Text style={styles.sectionSubtitle}>
-          30 verified tips from NDMA, IMD, AIIMS, and BMC guidelines
+          {TIP_SECTIONS.reduce((n, s) => n + s.tips.length, 0)} verified tips — tap a category to expand
         </Text>
 
-        {TIP_SECTIONS.map((section, sIdx) => (
-          <View key={sIdx}>
-            <View style={styles.categoryHeader}>
-              <Text style={styles.categoryEmoji}>{section.categoryEmoji}</Text>
-              <Text style={styles.categoryTitle}>{section.category}</Text>
-            </View>
+        {TIP_SECTIONS.map((section, sIdx) => {
+          const isExpanded = !!expandedSections[sIdx];
+          const tipCount = section.tips.length;
 
-            {section.tips.map((tip, tIdx) => (
-              <View key={`${sIdx}-${tIdx}`} style={styles.tipCard}>
-                <Text style={styles.tipEmoji}>{tip.emoji}</Text>
-                <View style={styles.tipContent}>
-                  <Text style={styles.tipTitle}>{tip.title}</Text>
-                  <Text style={styles.tipBody}>{tip.body}</Text>
-                  <Text style={styles.tipSource}>Source: {tip.source}</Text>
+          return (
+            <View key={sIdx} style={styles.accordionSection}>
+              <TouchableOpacity
+                style={[styles.accordionHeader, isExpanded && styles.accordionHeaderActive]}
+                onPress={() => {
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                  setExpandedSections((prev) => ({ ...prev, [sIdx]: !prev[sIdx] }));
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={styles.accordionLeft}>
+                  <Text style={styles.categoryEmoji}>{section.categoryEmoji}</Text>
+                  <View>
+                    <Text style={styles.categoryTitle}>{section.category}</Text>
+                    <Text style={styles.tipCount}>{tipCount} tips</Text>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </View>
-        ))}
+                <Text style={styles.chevron}>{isExpanded ? '▲' : '▼'}</Text>
+              </TouchableOpacity>
+
+              {isExpanded && (
+                <View style={styles.accordionBody}>
+                  {section.tips.map((tip, tIdx) => (
+                    <View key={`${sIdx}-${tIdx}`} style={styles.tipCard}>
+                      <Text style={styles.tipEmoji}>{tip.emoji}</Text>
+                      <View style={styles.tipContent}>
+                        <Text style={styles.tipTitle}>{tip.title}</Text>
+                        <Text style={styles.tipBody}>{tip.body}</Text>
+                        <Text style={styles.tipSource}>Source: {tip.source}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          );
+        })}
 
         <View style={{ height: Spacing.xxl }} />
       </ScrollView>
@@ -508,38 +538,60 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
 
-  // Category header
-  categoryHeader: {
+  // Accordion
+  accordionSection: {
+    marginBottom: Spacing.sm,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    backgroundColor: Colors.card,
+  },
+  accordionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
-    paddingBottom: Spacing.xs,
+    justifyContent: 'space-between',
+    padding: Spacing.md + 2,
+    backgroundColor: Colors.card,
+  },
+  accordionHeaderActive: {
     borderBottomWidth: 1,
     borderBottomColor: Colors.borderLight,
   },
+  accordionLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
   categoryEmoji: {
-    fontSize: 16,
+    fontSize: 22,
   },
   categoryTitle: {
     fontSize: Typography.size.sm,
     fontWeight: Typography.weight.bold,
-    color: Colors.primary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    color: Colors.text,
+  },
+  tipCount: {
+    fontSize: Typography.size.xs,
+    color: Colors.textSecondary,
+    marginTop: 1,
+  },
+  chevron: {
+    fontSize: 12,
+    color: Colors.textLight,
+  },
+  accordionBody: {
+    paddingHorizontal: Spacing.sm,
+    paddingBottom: Spacing.sm,
   },
 
   // Tip cards
   tipCard: {
     flexDirection: 'row',
     gap: Spacing.md,
-    backgroundColor: Colors.card,
-    borderRadius: BorderRadius.md,
     padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.borderLight,
   },
   tipEmoji: {
     fontSize: 22,

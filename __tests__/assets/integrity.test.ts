@@ -37,17 +37,19 @@ describe('App Assets', () => {
 describe('Food Image Assets', () => {
   const expectedLocalImages = [
     'food_005', 'food_007', 'food_008', 'food_009',
+    'food_011', 'food_012', 'food_013', 'food_014', 'food_015', 'food_016', 'food_017',
     'drink_002', 'drink_003', 'drink_004', 'drink_005', 'drink_006',
+    'drink_007', 'drink_008', 'drink_009', 'drink_010', 'drink_011', 'drink_012',
     'avoid_003', 'avoid_005',
   ];
 
-  it('all 11 local food images can be required', () => {
+  it('all 24 local food images can be required', () => {
     expectedLocalImages.forEach((id) => {
       expect(LOCAL_FOOD_IMAGES[id]).toBeDefined();
     });
   });
 
   it('food images directory has correct count', () => {
-    expect(Object.keys(LOCAL_FOOD_IMAGES).length).toBe(11);
+    expect(Object.keys(LOCAL_FOOD_IMAGES).length).toBe(24);
   });
 });
