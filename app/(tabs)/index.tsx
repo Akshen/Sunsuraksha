@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors, Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { useLocation } from '@/hooks/useLocation';
 import { useWeather } from '@/hooks/useWeather';
+import { AdBanner } from '@/components/common/AdBanner';
 import { HeatScoreRing } from '@/components/home/HeatScoreRing';
 import { ActionCard } from '@/components/home/ActionCard';
 import { HourlyTimeline } from '@/components/home/HourlyTimeline';
@@ -75,7 +76,7 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.appName}>Sun Se Suraksha</Text>
+            <Text style={styles.appName}>SunSuraksha</Text>
             <Text style={styles.cityText}>{sourceEmoji} {weather.city}</Text>
           </View>
           <Text style={styles.updated}>
@@ -123,6 +124,10 @@ export default function HomeScreen() {
         <View style={styles.spacerLg} />
 
         <QuickActions />
+
+        <View style={styles.spacer} />
+
+        <AdBanner />
 
         <View style={styles.spacerLg} />
       </ScrollView>

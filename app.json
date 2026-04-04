@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "SunSuraksha",
-    "slug": "sunsuraksha",
-    "version": "1.0.0",
+    "name": "Sun Se Suraksha",
+    "slug": "sunsesuraksha",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "sunsuraksha",
+    "scheme": "sunsesuraksha",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -14,9 +14,9 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sunsuraksha.app",
+      "bundleIdentifier": "com.sunsesuraksha.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "SunSuraksha needs your location to show local weather and heat alerts for your city."
+        "NSLocationWhenInUseUsageDescription": "Sun Se Suraksha needs your location to show local weather and heat alerts for your city."
       }
     },
     "android": {
@@ -24,12 +24,10 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFF9F3"
       },
-      "package": "com.sunsuraksha.app",
+      "package": "com.sunsesuraksha.app",
       "permissions": [
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
+        "ACCESS_COARSE_LOCATION"
       ]
     },
     "plugins": [
@@ -38,7 +36,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "SunSuraksha needs your location to show local weather and heat alerts."
+          "locationWhenInUsePermission": "Sun Se Suraksha needs your location to show local weather and heat alerts."
         }
       ],
       [
@@ -51,12 +49,9 @@
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "86867493-a44e-4ecc-887b-e98cd2889a48"
-      }
     }
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-5170234993465769~7474609062"
   }
 }
