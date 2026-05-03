@@ -2,7 +2,7 @@
   "expo": {
     "name": "Sun Se Suraksha",
     "slug": "sunsesuraksha",
-    "version": "1.1.0",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "sunsesuraksha",
@@ -28,7 +28,8 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION"
-      ]
+      ],
+      "versionCode": 7
     },
     "plugins": [
       "expo-router",
@@ -49,9 +50,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "5b698eb8-d616-4c59-9e39-eb5a9857a63e"
+      }
     }
-  },
-  "react-native-google-mobile-ads": {
-    "android_app_id": "ca-app-pub-5170234993465769~7474609062"
   }
 }

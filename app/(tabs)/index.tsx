@@ -127,7 +127,7 @@ export default function HomeScreen() {
 
         <View style={styles.spacer} />
 
-        <AdBanner />
+     {/* <AdBanner />  */}
 
         <View style={styles.spacerLg} />
       </ScrollView>

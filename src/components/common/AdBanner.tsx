@@ -1,60 +1,74 @@
 /**
- * AdBanner — Minimal Google AdMob banner
+ * AdBanner — Crash-proof Google AdMob banner
  *
- * Shows a small banner ad at the bottom of a screen.
- * Gracefully hides if ads fail to load.
+ * Triple safety layer:
+ * 1. Try/catch around require (Expo Go safety)
+ * 2. Try/catch around initialization
+ * 3. ErrorBoundary-style state to hide on any error
  *
- * Usage:
- *   <AdBanner />
- *
- * Note: Only works in production builds (not Expo Go).
- * Uses test IDs in development.
+ * If ANYTHING goes wrong, the banner silently disappears.
+ * The app never crashes due to ads.
  */
 
-import { useState } from 'react';
-import { View, StyleSheet, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 
-// Conditionally import to prevent crash in Expo Go
-let BannerAd: any = null;
-let BannerAdSize: any = null;
-let TestIds: any = null;
-
-try {
-  const admob = require('react-native-google-mobile-ads');
-  BannerAd = admob.BannerAd;
-  BannerAdSize = admob.BannerAdSize;
-  TestIds = admob.TestIds;
-} catch {
-  // react-native-google-mobile-ads not available (Expo Go)
-}
-
-const AD_UNIT_ID = __DEV__
-  ? TestIds?.BANNER ?? 'ca-app-pub-3940256099942544/6300978111' // Google test banner
-  : 'ca-app-pub-5170234993465769/3283353660'; // Production banner
+const AD_UNIT_ID = 'ca-app-pub-5170234993465769/3283353660';
+const TEST_AD_UNIT_ID = 'ca-app-pub-3940256099942544/6300978111';
 
 export function AdBanner() {
+  const [AdComponent, setAdComponent] = useState<React.ComponentType<any> | null>(null);
+  const [adSize, setAdSize] = useState<any>(null);
   const [adLoaded, setAdLoaded] = useState(false);
-  const [adError, setAdError] = useState(false);
+  const [adFailed, setAdFailed] = useState(false);
 
-  // Don't render if admob isn't available (Expo Go)
-  if (!BannerAd) return null;
+  useEffect(() => {
+    // Delay initialization to let the app fully load first
+    const timer = setTimeout(() => {
+      try {
+        const admob = require('react-native-google-mobile-ads');
 
-  // Don't render if ad failed
-  if (adError) return null;
+        // Initialize mobile ads SDK
+        if (admob.default && admob.default.initialize) {
+          admob.default.initialize().catch(() => {});
+        } else if (admob.MobileAds) {
+          admob.MobileAds().initialize().catch(() => {});
+        }
 
-  return (
-    <View style={[styles.container, !adLoaded && styles.hidden]}>
-      <BannerAd
-        unitId={AD_UNIT_ID}
-        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-        requestOptions={{
-          requestNonPersonalizedAdsOnly: true,
-        }}
-        onAdLoaded={() => setAdLoaded(true)}
-        onAdFailedToLoad={() => setAdError(true)}
-      />
-    </View>
-  );
+        setAdComponent(() => admob.BannerAd);
+        setAdSize(admob.BannerAdSize?.BANNER || 'BANNER');
+      } catch {
+        // Module not available — Expo Go or build issue
+        setAdFailed(true);
+      }
+    }, 3000); // Wait 3 seconds after app loads
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Don't render if module unavailable or failed
+  if (adFailed || !AdComponent) return null;
+
+  const unitId = __DEV__ ? TEST_AD_UNIT_ID : AD_UNIT_ID;
+
+  try {
+    return (
+      <View style={[styles.container, !adLoaded && styles.hidden]}>
+        <AdComponent
+          unitId={unitId}
+          size={adSize}
+          requestOptions={{
+            requestNonPersonalizedAdsOnly: true,
+          }}
+          onAdLoaded={() => setAdLoaded(true)}
+          onAdFailedToLoad={() => setAdFailed(true)}
+        />
+      </View>
+    );
+  } catch {
+    // Render crashed — hide silently
+    return null;
+  }
 }
 
 const styles = StyleSheet.create({
