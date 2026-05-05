@@ -34,10 +34,12 @@ interface WeatherCacheRow {
 
 /**
  * Read cached weather for a city from Supabase.
- * Returns null if cache is stale or missing.
+ * Returns null if cache is stale, missing, or Supabase is not configured.
  */
 export async function readWeatherCache(city: string): Promise<WeatherData | null> {
   try {
+    if (!supabase) return null;
+
     const normalized = city.toLowerCase().trim();
 
     const { data, error } = await supabase
@@ -79,6 +81,8 @@ export async function writeWeatherCache(
   coords?: { lat: number; lon: number }
 ): Promise<void> {
   try {
+    if (!supabase) return;
+
     const normalized = city.toLowerCase().trim();
 
     await supabase.from('weather_cache').upsert(
